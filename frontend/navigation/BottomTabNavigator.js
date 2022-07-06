@@ -8,6 +8,7 @@ import { useColorScheme } from "react-native";
 import Colors from "../constants/Colors";
 import TabOneScreen from "../screens/TabOneScreen";
 import TabTwoScreen from "../screens/TabTwoScreen";
+import { Auth, Signup } from "../components/auth";
 
 const BottomTab = createBottomTabNavigator();
 
@@ -70,7 +71,7 @@ function TabTwoNavigator() {
     <TabTwoStack.Navigator>
       <TabTwoStack.Screen
         name="TabTwoScreen"
-        component={TabTwoScreen}
+        component={Signup}
         options={{ headerTitle: "Tab Two Title" }}
       />
     </TabTwoStack.Navigator>
