@@ -8,12 +8,16 @@ var https = require('https');
 var express = require('express');
 var app = express();
 
-// your express configuration here
+const Pool  = require('pg')
+// pools will use environment variables
+// for connection information
+const pool = new Pool()
+
 
 var httpServer = http.createServer(app);
 //var httpsServer = https.createServer(credentials, app);
 
-httpServer.listen(8080);
+httpServer.listen(8000);
 //httpsServer.listen(8443);
 const port = 5000;
 
