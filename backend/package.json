@@ -9,6 +9,7 @@
   "author": "Michael Sanchez",
   "license": "MIT",
   "dependencies": {
+    "dotenv": "^16.0.1",
     "express": "^4.18.1",
     "md6-hash": "^1.0.0",
     "pg": "^8.7.3",

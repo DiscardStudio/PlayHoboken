@@ -7,7 +7,7 @@ var certificate = process.env.certificate;
 var credentials = {key: privateKey, cert: certificate};
 var express = require('express');
 var app = express();
-
+require('dotenv').config();
 const { Pool } = require('pg')
 // pools will use environment variables
 // for connection information
@@ -37,9 +37,23 @@ httpServer.listen(8000);
 httpsServer.listen(8443);
 const port = 5000;
 
-app.post('/signup', (req, res) => {
-    res.json({val:"nice"});
-})
+app.get('/signup', (req, res) => {
+    pool.query(`select email from auth on where email=${req.query.email}`, 
+        (err, result) => {
+        if (result && result.rows && result.rows.length > 0) {
+            res.sendStatus(500);
+            return console.error('User already exists')
+        }
+        pool.query(`insert into auth(email,passhash) values(${req.query.email},${req.query.passhash}); insert into users(email, first_name, last_name) values (${req.query.email},${req.query.first_name},${req.query.last_name})`, 
+            (err, result) => {
+            if (err) {
+                res.sendStatus(403);
+                return console.error('Error executing query', err.stack)
+            }
+            res.sendStatus(200);
+        })
+    })
+});
 
 app.get('/login', (req,res) => {
     pool.query(`select users.email, users.first_name, users.last_name, auth.passhash
@@ -55,13 +69,18 @@ app.get('/login', (req,res) => {
 });
 
 app.get('/user', (req,res) => {
-    res.json({
-        email: "michael@playhoboken.com",
-        first_name: "Mike",
-        last_name: "Sanchez"
-    });
+    pool.query(`select email, first_name, last_name
+    from users
+    where email=${req.query.email}`, 
+        (err, result) => {
+        if (err) {
+            res.sendStatus(404);
+            return console.error('Error executing query', err.stack)
+        }
+        res.json(result.rows[0])
+    })
 });
 
 app.listen(port, () => {
     console.log(`Example app listening on port ${port}`);
-})
+});
