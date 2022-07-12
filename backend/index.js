@@ -37,22 +37,60 @@ httpServer.listen(8000);
 httpsServer.listen(8443);
 const port = 5000;
 
-app.get('/signup', (req, res) => {
+app.post('/signup', (req, res) => {
     pool.query(`select email from auth on where email=${req.query.email}`, 
         (err, result) => {
         if (result && result.rows && result.rows.length > 0) {
             res.sendStatus(500);
-            return console.error('User already exists')
+            return console.error('User already exists');
         }
         pool.query(`insert into auth(email,passhash) values(${req.query.email},${req.query.passhash}); insert into users(email, first_name, last_name) values (${req.query.email},${req.query.first_name},${req.query.last_name})`, 
             (err, result) => {
             if (err) {
                 res.sendStatus(403);
-                return console.error('Error executing query', err.stack)
+                return console.error('Error executing query', err.stack);
             }
             res.sendStatus(200);
-        })
-    })
+        });
+    });
+});
+
+/*var nodemailer = require('nodemailer');
+
+var transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: 'youremail@gmail.com',
+    pass: 'yourpassword'
+  }
+});
+
+var mailOptions = {
+  from: 'youremail@gmail.com',
+  to: 'myfriend@yahoo.com',
+  subject: 'Sending Email using Node.js',
+  text: 'That was easy!'
+};
+
+*/
+
+app.post('/create-session', (req, res) => {
+    pool.query(`insert into sessions(email, first_name, last_name, timeslot, game) values (${req.query.email},${req.query.first_name},${req.query.last_name},${new Date(date.getTime() + (-300)*60*1000)},${req.query.game})`, 
+        (err, result) => {
+        if (result && result.rows && result.rows.length > 0) {
+            res.sendStatus(403);
+            return console.error('Session already exists');
+        }
+    });
+    /*
+    transporter.sendMail(mailOptions, function(error, info){
+        if (error) {
+            console.log(error);
+        } else {
+            console.log('Email sent: ' + info.response);
+        }
+    });
+    */
 });
 
 app.get('/login', (req,res) => {
@@ -62,10 +100,10 @@ app.get('/login', (req,res) => {
         (err, result) => {
         if (err) {
             res.sendStatus(404);
-            return console.error('Error executing query', err.stack)
+            return console.error('Error executing query', err.stack);
         }
-        res.json(result.rows[0])
-    })
+        res.json(result.rows[0]);
+    });
 });
 
 app.get('/user', (req,res) => {
@@ -75,10 +113,10 @@ app.get('/user', (req,res) => {
         (err, result) => {
         if (err) {
             res.sendStatus(404);
-            return console.error('Error executing query', err.stack)
+            return console.error('Error executing query', err.stack);
         }
-        res.json(result.rows[0])
-    })
+        res.json(result.rows[0]);
+    });
 });
 
 app.listen(port, () => {
