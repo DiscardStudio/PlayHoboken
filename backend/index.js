@@ -55,23 +55,19 @@ app.post('/signup', (req, res) => {
     });
 });
 
-/*var nodemailer = require('nodemailer');
+/*
+var nodemailer = require('nodemailer');
 
-var transporter = nodemailer.createTransport({
-  service: 'gmail',
-  auth: {
-    user: 'youremail@gmail.com',
-    pass: 'yourpassword'
-  }
-});
+var transporter = Mailer.createTransport({
+    service: "smtp",
+    host: "playhoboken.com",
+    port: 465,
 
-var mailOptions = {
-  from: 'youremail@gmail.com',
-  to: 'myfriend@yahoo.com',
-  subject: 'Sending Email using Node.js',
-  text: 'That was easy!'
-};
-
+    auth: {
+    user: "noreply@playhoboken.com", 
+    pass: "process.env.PGPASSWORD",   
+    },
+ );
 */
 
 app.post('/create-session', (req, res) => {
@@ -82,7 +78,12 @@ app.post('/create-session', (req, res) => {
             return console.error('Session already exists');
         }
     });
-    /*
+    /*var mailOptions = {
+        from: 'noreply@playhoboken.com',
+        to: 'myfriend@yahoo.com',
+        subject: 'Sending Email using Node.js',
+        text: 'That was easy!'
+    };
     transporter.sendMail(mailOptions, function(error, info){
         if (error) {
             console.log(error);
