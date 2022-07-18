@@ -41,13 +41,13 @@ app.post('/signup', (req, res) => {
     pool.query(`select email from auth on where email=${req.query.email}`, 
         (err, result) => {
         if (result && result.rows && result.rows.length > 0) {
-            res.sendStatus(500);
+            res.json({status:500});
             return console.error('User already exists');
         }
         pool.query(`insert into auth(email,passhash) values(${req.query.email},${req.query.passhash}); insert into users(email, first_name, last_name) values (${req.query.email},${req.query.first_name},${req.query.last_name})`, 
             (err, result) => {
             if (err) {
-                res.sendStatus(403);
+                res.json({status:403});
                 return console.error('Error executing query', err.stack);
             }
             res.sendStatus(200);
