@@ -6,7 +6,7 @@ import Auth from './screens/Auth.js';
 export default function App() {
   return (
     <View style={styles.container}>
-      <Auth login={0}/>
+      <Auth/>
     </View>
   );
 }
