@@ -27,6 +27,7 @@ export default function Find(props) {
                 </View>
             )}
             <View style={styles.break}/>
+            <Text style={styles.header2}>Nobody Playing Your Game?</Text>
         </View>
     );
 }
@@ -36,6 +37,20 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: '#fff',
         alignItems: 'center',
+    },
+    header1: {
+        position: 'relative',
+        top: 25,
+        fontSize: 32,
+        margin: 10,
+        marginBottom: 20,
+    },
+    header2: {
+        position: 'relative',
+        top: 25,
+        fontSize: 25,
+        margin: 10,
+        marginTop: 25,
     },
     find: {
         top: 55,

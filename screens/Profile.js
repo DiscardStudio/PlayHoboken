@@ -1,10 +1,11 @@
+import { forwardRef } from "react";
 import { StyleSheet, Text, View, TextInput, Button } from "react-native";
 
-export default function Profile(props) {
+const Profile=(props,ref) => {
 
     return (
         <View style={styles.container}>
-
+            <Text style={styles.header1}>Hello {ref.current.first_name}</Text>
         </View>
     );
 }
@@ -15,21 +16,34 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
         alignItems: 'center',
     },
-    play: {
-        position: 'absolute',
-        flex: 1,
-        backgroundColor: '#fff',
-        margin: 0,
-        padding: 0,
-        height: '100%',
-        width: '100%',
+    header1: {
+        position: 'relative',
+        top: 25,
+        fontSize: 32,
+        margin: 10,
+        marginBottom: 20,
+    },
+    header2: {
+        position: 'relative',
+        top: 25,
+        fontSize: 25,
+        margin: 10,
+    },
+    header3: {
+        position: 'relative',
+        top: 25,
+        fontSize: 15,
+        marginBottom: 10,
+    },
+    header4: {
+        position: 'relative',
+        fontWeight: 'bold',
+        fontSize: 15,
+        marginLeft: 10,
     },
     find: {
         top: 55,
         position: 'relative',
-        shadowOffset: -5,
-        shadowColor: 'black',
-        shadowRadius: 10,
         backgroundColor: '#fff',
         elevation: 40,
         alignItems: 'center',
@@ -41,35 +55,17 @@ const styles = StyleSheet.create({
         height: 50,
         margin: 15,
     },
-    nav: {
-        flexDirection: 'row',
+    break: {
+        top: 55,
         position: 'relative',
         alignItems: 'center',
         justifyContent: 'center',
-        margin: 0,
-        bottom: 0,
-        left: 0,
-        backgroundColor: 'orange',
-        shadowOffset: -10,
-        shadowColor: 'black',
-        shadowRadius: 10,
-        elevation: 40,
-        width: '100%',
-        height: 70,
-    },
-    inputs: {
-        height: 40,
-        width: 205,
-        margin: 12,
         borderWidth: 1,
-        borderRadius: 3,
-        padding: 10,
-    },
-    navButtons: {
-        position: 'relative',
-        height: 30,
-        width: 75,
-        top: 5,
+        borderColor: 'black',
+        width: 375,
+        height: 0,
         margin: 15,
-    },
-  });
+    }
+});
+
+export default forwardRef(Profile);

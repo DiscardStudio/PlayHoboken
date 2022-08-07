@@ -1,15 +1,15 @@
-import { useState, useLayoutEffect } from "react";
+import { useState, useLayoutEffect, forwardRef } from "react";
 import { StyleSheet, Text, View, TextInput, Button } from "react-native";
 import Find from './Find.js';
 import Home from './Home.js';
 import Profile from './Profile.js';
 
-export default function Play(props) {
+const Play = (props,ref) => {
     const [page, toggle] = useState(0);
     return (
 
         <View style={styles.play}>
-           {page === 0? <Home/>: (page === 1? <Find/>: <Profile/>)}
+           {page === 0? <Home/>: (page === 1? <Find/>: <Profile ref={ref}/>)}
            <View style={styles.nav}>
                 <Button style={styles.navButtons} title="Home" onPress={e => toggle(0)}/>
                 <Button style={styles.navButtons} title="Find Session" onPress={e => toggle(1)}/>
@@ -53,3 +53,5 @@ const styles = StyleSheet.create({
         margin: 15,
     },
   });
+
+export default forwardRef(Play);
