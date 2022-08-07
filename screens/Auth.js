@@ -7,8 +7,8 @@ import Login from './Login.js';
 export default Auth = (props) => {
     const [page, toggle] = useState(2);
     const user = useRef({
-        first_name: "mike",
-        last_name: "sanchez"
+        first_name: "Mike",
+        last_name: "Sanchez"
     });
     return (
         page < 2?

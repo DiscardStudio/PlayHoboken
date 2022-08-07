@@ -9,7 +9,7 @@ const Play = (props,ref) => {
     return (
 
         <View style={styles.play}>
-           {page === 0? <Home/>: (page === 1? <Find/>: <Profile ref={ref}/>)}
+           {page === 0? <Home/>: (page === 1? <Find ref={ref}/>: <Profile ref={ref}/>)}
            <View style={styles.nav}>
                 <Button style={styles.navButtons} title="Home" onPress={e => toggle(0)}/>
                 <Button style={styles.navButtons} title="Find Session" onPress={e => toggle(1)}/>
