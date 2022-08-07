@@ -1,4 +1,4 @@
-import { forwardRef, useEffect, useRef, useState } from "react";
+import { forwardRef, useRef, useState } from "react";
 import { StyleSheet, Text, View, Button } from "react-native";
 import DropdownComponent from "../components/DropdownComponent";
 
@@ -19,10 +19,7 @@ const Find = (props, ref) => {
         }
     ]);
 
-    useEffect(() => {
-        if(sessions == null)
-            return <Text>Loading...</Text>;
-    })
+    //create useEffect to enable backed query
 
     return (
         <View style={styles.container}>
