@@ -1,4 +1,4 @@
-import { forwardRef, useState } from "react";
+import { forwardRef, useEffect, useState } from "react";
 import { StyleSheet, Text, View, TextInput, Button } from "react-native";
 
 const Signup = (props, ref) => {
@@ -19,9 +19,22 @@ const Signup = (props, ref) => {
             first_name: fname,
             last_name: lname
         }));
+        if(xhr.status === 200) {
+            ref.current = {
+                email: email,
+                first_name: fname,
+                last_name: lname
+            }
+        }
     }
 
-    async function hashAlgo() {
+    useEffect(()=> {
+        if(pass !== confirm)
+            console.error("Passwords must match");
+    });
+
+    async function hashAlgo(e) {
+        e.preventDefault();
         var hash = 0, i, chr;
         if (pass.length === 0) return hash;
         for (i = 0; i < pass.length; i++) {
@@ -38,8 +51,8 @@ const Signup = (props, ref) => {
             <TextInput style={styles.inputs} onChange={setFName} placeholder="First Name"/>
             <TextInput style={styles.inputs} onChange={setLName} placeholder="Last Name"/>
             <TextInput style={styles.inputs} onChange={setEmail} placeholder="Email"/>
-            <TextInput style={styles.inputs} onChange={setPass} placeholder="Password"/>
-            <TextInput style={styles.inputs} onChange={setConfirm} placeholder="Confirm Password"/>
+            <TextInput secureTextEntry={true} style={styles.inputs} onChange={setPass} placeholder="Password"/>
+            <TextInput secureTextEntry={true} style={styles.inputs} onChange={setConfirm} placeholder="Confirm Password"/>
             <Button title="Submit" onPress={hashAlgo}/>
         </View>
     );

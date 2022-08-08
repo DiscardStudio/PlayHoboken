@@ -8,16 +8,16 @@ export default Auth = (props) => {
     const [page, toggle] = useState(0);
     const user = useRef({
         email: null,
-        first_name: "null",
-        last_name: "null"
+        first_name: null,
+        last_name: null
     });
 
     useEffect(() => {
-        if(email !== "null")
-            toggle(2);
+        if(user.current.email === null)
+            toggle(page);
         else
-            toggle(0);
-    })
+            toggle(2);
+    });
 
     return (
         page < 2?
