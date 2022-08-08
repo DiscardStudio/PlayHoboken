@@ -1,17 +1,6 @@
-var fs = require('fs');
-var http = require('http');
-var https = require('https');
-var cors = require('cors');
-const path = require('path');
 var Mailer = require('nodemailer');
-
-var privateKey  = process.env.privateKey;
-var certificate = process.env.certificate;
-
-var credentials = {key: privateKey, cert: certificate};
 var express = require('express');
 var app = express();
-require('dotenv').config();
 // pools will use environment variables
 // for connection information
 const port = process.env.PORT || 5000;
@@ -42,7 +31,8 @@ pool.connect();
     email varchar(32) primary key,
     first_name varchar(32) not null,
     last_name varchar(32) not null,
-    timeslot time not null,
+    session_date char(8) not null,
+    session_time char(5) not null,
     game varchar(4) not null
     );
     
@@ -61,22 +51,10 @@ select iss.email, iss.first_name, iss.last_name, iss.timeslot, ua.passhash, iss.
 from iss inner join ua on(ua.email=iss.email)
 */
 
-var httpServer = http.createServer(app);
-var httpsServer = https.createServer(credentials, app);
-
-httpServer.listen(8000);
-httpsServer.listen(8443);
-
-app.use(express.static(path.resolve(__dirname, './front/build')));
-
 app.use(cors({
     origin: '*'
 }));
 app.use(express.json());
-
-app.get('/', (req, res) => {
-  res.sendFile(path.resolve(__dirname, './front/build', 'index.html'));
-});
 
 app.post('/signup', (req, res) => {
     console.log(req.body);
@@ -112,7 +90,7 @@ var transporter = Mailer.createTransport({
 });
 
 app.post('/create-session', (req, res) => {
-    pool.query(`insert into sessions(email, first_name, last_name, timeslot, game) values ('${req.body.email}','${req.body.first_name}','${req.body.last_name}',${new Date(date.getTime() + (-300)*60*1000)},'${req.body.game}')`, 
+    pool.query(`insert into sessions(email, first_name, last_name, session_date, session_time, game) values ('${req.body.email}','${req.body.first_name}','${req.body.last_name}',${date.getMonth()+"/"+date.getDay()+"/"+date.getFullYear()},${date.getHours()%12+":"+date.getMinutes()},'${req.body.game}')`, 
         (err, result) => {
         if (result && result.rows && result.rows.length > 0) {
             res.json({status:403});
@@ -148,8 +126,31 @@ app.post('/create-session', (req, res) => {
 });
 
 app.get('/find-session', (req, res) => {
-    pool.query(`select first_name, last_name, timeslot, game
+    pool.query(`select first_name, last_name, session_time, game
                 from sessions
+                where sessions.session_date = ${date.getMonth()+"/"+date.getDay()+"/"+date.getFullYear()}
+                order by session_time
+                `, 
+        (err, result) => {
+        if (err) {
+            res.json({status:403});
+            return console.error('Error finding sessions');
+        }
+        if (result.rows.length > 0) {
+            res.json({rows:result.rows});
+            return console.write('Sent Sessions');
+        }
+        res.json({status:404});
+        return console.write('No Sessions Found');
+        
+    });
+});
+
+app.get('/my-sessions', (req, res) => {
+    pool.query(`select first_name, last_name, session_time, game
+                from sessions
+                where sessions.email = ${req.email}
+                order by session_time
                 `, 
         (err, result) => {
         if (err) {

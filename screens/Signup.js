@@ -17,7 +17,7 @@ const Signup = (props, ref) => {
             hash  = ((hash << 5) - hash) + chr;
             hash |= 0; // Convert to 32bit integer
         }
-        setPass(hash);
+        setHash(hash);
         console.log(hash);
     } 
 
