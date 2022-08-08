@@ -5,7 +5,7 @@ var app = express();
 // for connection information
 const port = process.env.PORT || 5000;
 const { Client } = require('pg');
-
+require('dotenv').config();
 const pool = new Client({
   connectionString: process.env.DATABASE_URL,
   ssl: {
@@ -51,9 +51,6 @@ select iss.email, iss.first_name, iss.last_name, iss.timeslot, ua.passhash, iss.
 from iss inner join ua on(ua.email=iss.email)
 */
 
-app.use(cors({
-    origin: '*'
-}));
 app.use(express.json());
 
 app.post('/signup', (req, res) => {
@@ -61,20 +58,20 @@ app.post('/signup', (req, res) => {
     pool.query(`select email from auth where email='${req.body.email}'`, 
         (err, result) => {
         if(err) {
-            res.json({status:404});
+            res.status(404);
             return console.error('Error executing query\n', err.stack);
         }
         if (result && result.rows && result.rows.length > 0) {
-            res.json({status:500});
+            res.status(500);
             return console.error('User already exists');
         }
         pool.query(`insert into auth(email,passhash) values('${req.body.email}','${req.body.passhash}'); insert into users(email, first_name, last_name) values ('${req.body.email}','${req.body.first_name}','${req.body.last_name}')`, 
             (err, result) => {
             if (err) {
-                res.json({status:403});
+                res.status(403);
                 return console.error('Error executing query', err.stack);
             }
-            res.json({status:200});
+            res.status(200);
         });
     });
 });
@@ -93,7 +90,7 @@ app.post('/create-session', (req, res) => {
     pool.query(`insert into sessions(email, first_name, last_name, session_date, session_time, game) values ('${req.body.email}','${req.body.first_name}','${req.body.last_name}',${date.getMonth()+"/"+date.getDay()+"/"+date.getFullYear()},${date.getHours()%12+":"+date.getMinutes()},'${req.body.game}')`, 
         (err, result) => {
         if (result && result.rows && result.rows.length > 0) {
-            res.json({status:403});
+            res.status(403);
             return console.error('Session already exists');
         }
         pool.query(`
@@ -102,9 +99,11 @@ app.post('/create-session', (req, res) => {
             where users.email=interests.email and `, 
             (err, result2) => {
             if (err) {
-                res.json({status:403});
+                res.status(403);
                 return console.error('Error');
             }
+            else
+                res.status(200);
         });
     });
     for(var x=0;x<result.rows.length; x++) {
@@ -117,12 +116,13 @@ app.post('/create-session', (req, res) => {
         transporter.sendMail(mailOptions, function(error, info){
             if (error) {
                 console.log(error);
+                res.status(500);
             } else {
                 console.log('Email sent: ' + info.response);
+                res.status(200);
             }
         });
     }
-    res.json({status:200});
 });
 
 app.get('/find-session', (req, res) => {
@@ -133,14 +133,15 @@ app.get('/find-session', (req, res) => {
                 `, 
         (err, result) => {
         if (err) {
-            res.json({status:403});
+            res.status(403);
             return console.error('Error finding sessions');
         }
         if (result.rows.length > 0) {
+            res.status(200);
             res.json({rows:result.rows});
             return console.write('Sent Sessions');
         }
-        res.json({status:404});
+        res.status(404);
         return console.write('No Sessions Found');
         
     });
@@ -154,29 +155,30 @@ app.get('/my-sessions', (req, res) => {
                 `, 
         (err, result) => {
         if (err) {
-            res.json({status:403});
+            res.status(403);
             return console.error('Error finding sessions');
         }
         if (result.rows.length > 0) {
+            res.status(200);
             res.json({rows:result.rows});
             return console.write('Sent Sessions');
         }
-        res.json({status:404});
+        res.status(404);
         return console.write('No Sessions Found');
         
     });
 });
 
-app.get('/login', (req,res) => {
-    
+app.post('/login', (req,res) => {
     pool.query(`select users.email, users.first_name, users.last_name, auth.passhash
     from users inner join auth on (users.email=auth.email)
-    where users.email='${req.query.email}' and auth.passhash='${req.query.passhash}'`, 
+    where users.email='${req.body.email}' and auth.passhash='${req.body.passhash}'`, 
         (err, result) => {
         if (err) {
-            res.json({status:404});
+            res.status(404);
             return console.error('Error executing query', err.stack);
         }
+        res.status(200);
         res.json({email:result.rows[0].email,first_name:result.rows[0].first_name,last_name:result.rows[0].last_name});
     });
 });

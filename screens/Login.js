@@ -7,9 +7,9 @@ const Login = (props, ref) => {
     
     function hashAlgo(password) {
         var hash = 0, i, chr;
-        if (this.length === 0) return hash;
-        for (i = 0; i < this.length; i++) {
-            chr   = this.charCodeAt(i);
+        if (pass.length === 0) return hash;
+        for (i = 0; i < pass.length; i++) {
+            chr   = pass.charCodeAt(i);
             hash  = ((hash << 5) - hash) + chr;
             hash |= 0; // Convert to 32bit integer
         }
@@ -17,11 +17,22 @@ const Login = (props, ref) => {
         console.log(hash);
     }     
 
+    async function fetch_login(e) {
+        e.preventDefault();
+        var xhr = new XMLHttpRequest();
+        xhr.open("POST", "https://play-hoboken.herokuapp.com/login", true);
+        xhr.setRequestHeader('Content-Type', 'application/json');
+        xhr.send(JSON.stringify({
+            email: email,
+            passhash: hash
+        }));
+    }
+
     return (
         <View>
             <TextInput style={styles.inputs} onChange={setEmail} placeholder="Email"/>
             <TextInput style={styles.inputs} onChange={hashAlgo} placeholder="Password" />
-            <Button title="Submit" onPress={async e=>{console.log(hash)}}/>
+            <Button title="Submit" onPress={async e=>{fetch_login}}/>
         </View>
     );
 }

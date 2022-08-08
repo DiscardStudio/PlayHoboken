@@ -1,15 +1,24 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { StyleSheet, Text, View, TextInput, Button } from "react-native";
 import Play from './Play.js';
 import Signup from './Signup.js';
 import Login from './Login.js';
 
 export default Auth = (props) => {
-    const [page, toggle] = useState(2);
+    const [page, toggle] = useState(0);
     const user = useRef({
-        first_name: "Mike",
-        last_name: "Sanchez"
+        email: null,
+        first_name: "null",
+        last_name: "null"
     });
+
+    useEffect(() => {
+        if(email !== "null")
+            toggle(2);
+        else
+            toggle(0);
+    })
+
     return (
         page < 2?
         <View style={styles.container}>
