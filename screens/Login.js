@@ -1,4 +1,4 @@
-import { forwardRef, useState } from "react";
+import { forwardRef, useEffect, useState } from "react";
 import { StyleSheet, Text, View, TextInput, Button } from "react-native";
 
 const Login = (props, ref) => {
@@ -18,30 +18,32 @@ const Login = (props, ref) => {
         console.log(hash);
     }     
 
-    async function fetch_login(e) {
-        e.preventDefault();
+    async function fetch_login() {
         await hashAlgo();
-        var xhr = new XMLHttpRequest();
-        xhr.open("POST", "https://play-hoboken.herokuapp.com/login", true);
-        xhr.setRequestHeader('Content-Type', 'application/json');
-        await xhr.send(JSON.stringify({
-            email: email,
-            passhash: hash
-        }));
-        if(xhr.status === 200) {
+        fetch('https://play-hoboken.herokuapp.com/login', {
+            method: 'POST',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                email: email,
+                passhash: hash
+            })
+        }).then(json => {
             ref.current = {
                 email: email,
-                first_name: xhr.response.first_name,
-                last_name: xhr.response.last_name
+                first_name: json.first_name,
+                last_name: json.last_name
             }
-        }
+        }).catch(err => console.error(err));
     }
-
+    
     return (
         <View>
-            <TextInput style={styles.inputs} onChange={setEmail} placeholder="Email"/>
-            <TextInput secureTextEntry={true} style={styles.inputs} onChange={setPass} placeholder="Password" />
-            <Button title="Submit" onPress={e=>{fetch_login}}/>
+            <TextInput style={styles.inputs} onChange={e => {e.preventDefault(); setEmail()}} placeholder="Email"/>
+            <TextInput secureTextEntry={true} style={styles.inputs} onChange={e => {e.preventDefault(); setPass()}} placeholder="Password" />
+            <Button title="Submit" onPress={e => {e.preventDefault(); fetch_login()}}/>
         </View>
     );
 }

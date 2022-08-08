@@ -8,24 +8,28 @@ const Signup = (props, ref) => {
     const [pass, setPass] = useState("");
     const [confirm, setConfirm] = useState("");
     const [hash, setHash] = useState(0);
+    const [xhr, setXhr] = useState(new XMLHttpRequest());
 
     async function fetch_signup() {
-        var xhr = new XMLHttpRequest();
-        xhr.open("POST", "https://play-hoboken.herokuapp.com/signup", true);
-        xhr.setRequestHeader('Content-Type', 'application/json');
-        xhr.send(JSON.stringify({
-            email: email,
-            passhash: hash,
-            first_name: fname,
-            last_name: lname
-        }));
-        if(xhr.status === 200) {
+        fetch('https://play-hoboken.herokuapp.com/signup', {
+            method: 'POST',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                email: email,
+                passhash: hash,
+                first_name: fname,
+                last_name: lname
+            })
+        }).then(json => {
             ref.current = {
                 email: email,
                 first_name: fname,
                 last_name: lname
             }
-        }
+        }).catch(err => console.error(err));
     }
 
     useEffect(()=> {

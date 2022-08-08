@@ -13,9 +13,8 @@ export default Auth = (props) => {
     });
 
     useEffect(() => {
-        if(user.current.email === null)
-            toggle(page);
-        else
+        console.log(user);
+        if(user.current.email != null)
             toggle(2);
     });
 
