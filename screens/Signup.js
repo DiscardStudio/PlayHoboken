@@ -1,5 +1,6 @@
 import { forwardRef, useEffect, useState } from "react";
 import { StyleSheet, Text, View, TextInput, Button } from "react-native";
+import useHash from "../components/useHash";
 
 const Signup = (props, ref) => {
     const [fname, setFName] = useState("");
@@ -7,7 +8,7 @@ const Signup = (props, ref) => {
     const [email, setEmail] = useState("");
     const [pass, setPass] = useState("");
     const [confirm, setConfirm] = useState("");
-    const [hash, setHash] = useState(0);
+    const [hash, setHash] = useHash();
     const [xhr, setXhr] = useState(new XMLHttpRequest());
 
     async function fetch_signup() {
@@ -37,27 +38,31 @@ const Signup = (props, ref) => {
             console.error("Passwords must match");
     });
 
-    async function hashAlgo(e) {
-        e.preventDefault();
-        var hash = 0, i, chr;
-        if (pass.length === 0) return hash;
-        for (i = 0; i < pass.length; i++) {
-            chr   = pass.charCodeAt(i);
-            hash  = ((hash << 5) - hash) + chr;
-            hash |= 0; // Convert to 32bit integer
-        }
-        await setHash(hash);
-        await fetch_signup();
-    } 
-
     return (
         <View>
-            <TextInput style={styles.inputs} onChange={setFName} placeholder="First Name"/>
-            <TextInput style={styles.inputs} onChange={setLName} placeholder="Last Name"/>
-            <TextInput style={styles.inputs} onChange={setEmail} placeholder="Email"/>
-            <TextInput secureTextEntry={true} style={styles.inputs} onChange={setPass} placeholder="Password"/>
-            <TextInput secureTextEntry={true} style={styles.inputs} onChange={setConfirm} placeholder="Confirm Password"/>
-            <Button title="Submit" onPress={hashAlgo}/>
+            <TextInput style={styles.inputs} onChangeText={e=>{
+                e.preventDefault();
+                setFName(e.target.value);
+                }} placeholder="First Name"/>
+            <TextInput style={styles.inputs} onChangeText={e=>{
+                e.preventDefault();
+                setLName(e.target.value);
+                }} placeholder="Last Name"/>
+            <TextInput style={styles.inputs} onChangeText={e=>{
+                e.preventDefault();
+                setEmail(e.target.value);
+                }} placeholder="Email"/>
+            <TextInput secureTextEntry={true} style={styles.inputs} onChangeText={e=>{
+                e.preventDefault();
+                setPass(e.target.value);
+                e.target.value===confirm? setHash(e.target.value):console.error("Passwords must match")
+                }} placeholder="Password"/>
+            <TextInput secureTextEntry={true} style={styles.inputs} onChangeText={e=>{
+                e.preventDefault();
+                setConfirm(e.target.value);
+                e.target.value===pass? setHash(e.target.value):console.error("Passwords must match")
+                }} placeholder="Confirm Password"/>
+            <Button title="Submit" onPress={e=>{e.preventDefault(); fetch_signup();}}/>
         </View>
     );
 }

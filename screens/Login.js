@@ -1,25 +1,12 @@
 import { forwardRef, useEffect, useState } from "react";
 import { StyleSheet, Text, View, TextInput, Button } from "react-native";
+import useHash from "../components/useHash";
 
 const Login = (props, ref) => {
     const [email, setEmail] = useState("");
-    const [pass, setPass] = useState("");
-    const [hash, setHash] = useState(0);
-    
-    async function hashAlgo() {
-        var hash = 0, i, chr;
-        if (pass.length === 0) return hash;
-        for (i = 0; i < pass.length; i++) {
-            chr   = pass.charCodeAt(i);
-            hash  = ((hash << 5) - hash) + chr;
-            hash |= 0; // Convert to 32bit integer
-        }
-        await setHash(hash);
-        console.log(hash);
-    }     
+    const [hash, setHash] = useHash();
 
     async function fetch_login() {
-        await hashAlgo();
         fetch('https://play-hoboken.herokuapp.com/login', {
             method: 'POST',
             headers: {
@@ -35,15 +22,16 @@ const Login = (props, ref) => {
                 email: email,
                 first_name: json.first_name,
                 last_name: json.last_name
-            }
+            },
+            err => console.error(err)
         }).catch(err => console.error(err));
     }
     
     return (
         <View>
-            <TextInput style={styles.inputs} onChange={e => {e.preventDefault(); setEmail()}} placeholder="Email"/>
-            <TextInput secureTextEntry={true} style={styles.inputs} onChange={e => {e.preventDefault(); setPass()}} placeholder="Password" />
-            <Button title="Submit" onPress={e => {e.preventDefault(); fetch_login()}}/>
+            <TextInput style={styles.inputs} onChangeText={e => {setEmail(e)}} placeholder="Email"/>
+            <TextInput secureTextEntry={true} style={styles.inputs} onChangeText={e => {setHash(e)}} placeholder="Password" />
+            <Button title="Submit" onPress={e => {fetch_login()}}/>
         </View>
     );
 }
