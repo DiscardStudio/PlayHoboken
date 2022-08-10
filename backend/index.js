@@ -150,7 +150,7 @@ app.get('/find-session', (req, res) => {
 app.get('/my-sessions', (req, res) => {
     pool.query(`select first_name, last_name, session_time, game
                 from sessions
-                where sessions.email = '${req.email}'
+                where sessions.email = '${req.query.email}'
                 order by session_time
                 `, 
         (err, result) => {
@@ -179,7 +179,8 @@ app.post('/login', (req,res) => {
             return console.error('Error executing query', err.stack);
         }
         res.status(200);
-        res.json({email:result.rows[0].email,first_name:result.rows[0].first_name,last_name:result.rows[0].last_name});
+        res.json({result: result.rows[0]
+        });
     });
 });
 
