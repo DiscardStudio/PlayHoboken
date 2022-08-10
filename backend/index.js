@@ -170,7 +170,7 @@ app.get('/my-sessions', (req, res) => {
 });
 
 app.post('/login', (req,res) => {
-    pool.query(`select users.email, users.first_name, users.last_name, auth.passhash
+    pool.query(`select users.email, users.first_name, users.last_name
     from users inner join auth on (users.email=auth.email)
     where users.email='${req.body.email}' and auth.passhash='${req.body.passhash}'`, 
         (err, result) => {
@@ -178,9 +178,8 @@ app.post('/login', (req,res) => {
             res.status(404);
             return console.error('Error executing query', err.stack);
         }
+        res.json({result: result.rows[0]});
         res.status(200);
-        res.json({result: result.rows[0]
-        });
     });
 });
 
