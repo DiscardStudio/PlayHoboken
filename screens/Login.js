@@ -22,9 +22,13 @@ const Login = (props, ref) => {
                 email: email,
                 first_name: json.first_name,
                 last_name: json.last_name
-            },
-            err => console.error(err)
-        }).catch(err => console.error(err));
+            };
+            props.render({
+                email: email,
+                first_name: json.first_name,
+                last_name: json.last_name
+            });
+        }, err=> console.error(err)).catch(err => console.error(err));
     }
     
     return (

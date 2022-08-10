@@ -23,6 +23,9 @@ const Profile=(props,ref) => {
         <View style={styles.container}>
             <Text style={styles.header1}>Hello {ref.current.first_name}</Text>
             <Text style={styles.header2}>You've Played:</Text>
+            
+            <Text/>
+            <Button title="Log out" onPress={e => props.render()}/>
 
             <View style={styles.break}/>
 

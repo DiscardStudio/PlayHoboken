@@ -6,12 +6,14 @@ const Find = (props, ref) => {
     const createSession = useRef("");
     const [sessions, setSession] = useState([
         {
+            key: 0,
             first_name: "John",
             last_name: "Doe",
             timeslot: "2022-08-10 04:05:06",
             game: "Chess"
         },
         {
+            key: 1,
             first_name: "Jane",
             last_name: "Doe",
             timeslot: "2022-08-03 04:05:06",

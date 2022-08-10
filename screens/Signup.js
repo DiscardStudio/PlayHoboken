@@ -29,8 +29,13 @@ const Signup = (props, ref) => {
                 email: email,
                 first_name: fname,
                 last_name: lname
-            }
-        }).catch(err => console.error(err));
+            };
+            props.render({
+                email: email,
+                first_name: fname,
+                last_name: lname
+            });
+        }, err=> console.error(err)).catch(err => console.error(err));
     }
 
     useEffect(()=> {
