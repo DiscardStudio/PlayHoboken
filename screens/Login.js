@@ -7,6 +7,7 @@ const Login = (props, ref) => {
     const [hash, setHash] = useHash();
 
     async function fetch_login() {
+        console.log(hash);
         fetch('https://play-hoboken.herokuapp.com/login', {
             method: 'POST',
             headers: {
@@ -19,10 +20,11 @@ const Login = (props, ref) => {
             })
         }).then(json => {
             ref.current = {
-                email: email,
+                email: json.email,
                 first_name: json.first_name,
                 last_name: json.last_name
             };
+            console.log(json);
             props.render({
                 email: email,
                 first_name: json.first_name,

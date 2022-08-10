@@ -32,8 +32,6 @@ export default Auth = (props) => {
     }
 
     useLayoutEffect(() => {
-        console.log(user);
-        console.log(userState);
         if(userState.email != null)
             toggle(2);
     });

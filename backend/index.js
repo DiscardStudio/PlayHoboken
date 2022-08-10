@@ -96,7 +96,7 @@ app.post('/create-session', (req, res) => {
         pool.query(`
             select users.email, users.first_name
             from users, interests
-            where users.email=interests.email and `, 
+            where users.email=interests.email and '${req.body.game}'=any interests.games`, 
             (err, result2) => {
             if (err) {
                 res.status(403);
@@ -128,7 +128,7 @@ app.post('/create-session', (req, res) => {
 app.get('/find-session', (req, res) => {
     pool.query(`select first_name, last_name, session_time, game
                 from sessions
-                where sessions.session_date = ${date.getMonth()+"/"+date.getDay()+"/"+date.getFullYear()}
+                where sessions.session_date = '${date.getMonth()+"/"+date.getDay()+"/"+date.getFullYear()}'
                 order by session_time
                 `, 
         (err, result) => {
@@ -150,7 +150,7 @@ app.get('/find-session', (req, res) => {
 app.get('/my-sessions', (req, res) => {
     pool.query(`select first_name, last_name, session_time, game
                 from sessions
-                where sessions.email = ${req.email}
+                where sessions.email = '${req.email}'
                 order by session_time
                 `, 
         (err, result) => {

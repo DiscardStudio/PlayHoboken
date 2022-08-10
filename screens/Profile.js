@@ -30,7 +30,7 @@ const Profile=(props,ref) => {
             <View style={styles.break}/>
 
             {sessions.map(x=>
-                <View style={styles.find}>
+                <View key={x.key} style={styles.find}>
                     <Text>{x.first_name+" "+x.last_name+" played "+x.game+" at "+x.timeslot}</Text>
                 </View>
             )}

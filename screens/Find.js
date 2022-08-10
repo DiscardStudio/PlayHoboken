@@ -27,7 +27,7 @@ const Find = (props, ref) => {
         <View style={styles.container}>
             <Text style={styles.header1}>Who's Playing?</Text>
             {sessions.map(x=>
-                <View style={styles.find}>
+                <View key={x.key} style={styles.find}>
                     <Text>{x.first_name+" "+x.last_name+" started playing "+x.game+" at "+x.timeslot}</Text>
                 </View>
             )}
