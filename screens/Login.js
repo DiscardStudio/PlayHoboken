@@ -24,7 +24,6 @@ const Login = (props, ref) => {
                 first_name: json.first_name,
                 last_name: json.last_name
             };
-            console.log(json);
             props.render({
                 email: email,
                 first_name: json.first_name,

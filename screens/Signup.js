@@ -12,6 +12,7 @@ const Signup = (props, ref) => {
     const [xhr, setXhr] = useState(new XMLHttpRequest());
 
     async function fetch_signup() {
+        await setHash(pass);
         fetch('https://play-hoboken.herokuapp.com/signup', {
             method: 'POST',
             headers: {
@@ -24,7 +25,7 @@ const Signup = (props, ref) => {
                 first_name: fname,
                 last_name: lname
             })
-        }).then(json => {
+        }).then(() => {
             ref.current = {
                 email: email,
                 first_name: fname,
@@ -46,28 +47,23 @@ const Signup = (props, ref) => {
     return (
         <View>
             <TextInput style={styles.inputs} onChangeText={e=>{
-                e.preventDefault();
-                setFName(e.target.value);
+                setFName(e);
                 }} placeholder="First Name"/>
             <TextInput style={styles.inputs} onChangeText={e=>{
-                e.preventDefault();
-                setLName(e.target.value);
+                setLName(e);
                 }} placeholder="Last Name"/>
             <TextInput style={styles.inputs} onChangeText={e=>{
-                e.preventDefault();
-                setEmail(e.target.value);
+                setEmail(e);
                 }} placeholder="Email"/>
             <TextInput secureTextEntry={true} style={styles.inputs} onChangeText={e=>{
-                e.preventDefault();
-                setPass(e.target.value);
-                e.target.value===confirm? setHash(e.target.value):console.error("Passwords must match")
+                setPass();
+                e===confirm? setHash(e):console.error("Passwords must match")
                 }} placeholder="Password"/>
             <TextInput secureTextEntry={true} style={styles.inputs} onChangeText={e=>{
-                e.preventDefault();
-                setConfirm(e.target.value);
-                e.target.value===pass? setHash(e.target.value):console.error("Passwords must match")
+                setConfirm();
+                e===pass? setHash(e):console.error("Passwords must match")
                 }} placeholder="Confirm Password"/>
-            <Button title="Submit" onPress={e=>{e.preventDefault(); fetch_signup();}}/>
+            <Button title="Submit" onPress={e=>fetch_signup()}/>
         </View>
     );
 }
