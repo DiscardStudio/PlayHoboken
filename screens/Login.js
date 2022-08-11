@@ -17,7 +17,8 @@ const Login = (props, ref) => {
                 email: email,
                 passhash: hash
             })
-        }).then(json => {
+        })
+        .then(json => {
             ref.current = {
                 email: json.email,
                 first_name: json.first_name,
@@ -28,7 +29,8 @@ const Login = (props, ref) => {
                 first_name: json.first_name,
                 last_name: json.last_name
             });
-        }, err=> console.error(err)).catch(err => console.error(err));
+        }, err=> console.error(err))
+        .catch(err => console.error(err)).done();
     }
     
     return (
