@@ -1,5 +1,5 @@
 import { useState, useRef, useLayoutEffect } from "react";
-import { StyleSheet, Text, View, TextInput, Button } from "react-native";
+import { StyleSheet, View, Button } from "react-native";
 import Play from './Play.js';
 import Signup from './Signup.js';
 import Login from './Login.js';

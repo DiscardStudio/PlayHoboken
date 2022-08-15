@@ -1,5 +1,5 @@
-import { useState, useLayoutEffect, forwardRef } from "react";
-import { StyleSheet, Text, View, TextInput, Button } from "react-native";
+import { useState, forwardRef } from "react";
+import { StyleSheet, View, Button } from "react-native";
 import Find from './Find.js';
 import Home from './Home.js';
 import Profile from './Profile.js';

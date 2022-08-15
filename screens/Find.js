@@ -1,4 +1,4 @@
-import { forwardRef, useRef, useState } from "react";
+import { forwardRef, useLayoutEffect, useRef, useState } from "react";
 import { StyleSheet, Text, View, Button } from "react-native";
 import DropdownComponent from "../components/DropdownComponent";
 
@@ -21,7 +21,24 @@ const Find = (props, ref) => {
         }
     ]);
 
-    //create useEffect to enable backed query
+    //create useEffect to enable backend query
+    useLayoutEffect(() => {
+        fetch('https://play-hoboken.herokuapp.com/find-session', {
+            method: 'get',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                email: email,
+                passhash: hash
+            })
+        })
+        .then(json => {
+            setSession(json.rows);
+        }, err=> console.error(err))
+        .catch(err => console.error(err)).done();
+    });
 
     return (
         <View style={styles.container}>
