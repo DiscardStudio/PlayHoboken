@@ -28,11 +28,7 @@ const Find = (props, ref) => {
             headers: {
                 Accept: 'application/json',
                 'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                email: email,
-                passhash: hash
-            })
+            }
         })
         .then(json => {
             setSession(json.rows);

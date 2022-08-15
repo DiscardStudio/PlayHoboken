@@ -19,6 +19,23 @@ const Profile=(props,ref) => {
         }
     ]);
 
+    useLayoutEffect(() => {
+        fetch('https://play-hoboken.herokuapp.com/my-sessions', {
+            method: 'get',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                email: ref.email
+            })
+        })
+        .then(json => {
+            setSession(json.rows);
+        }, err=> console.error(err))
+        .catch(err => console.error(err)).done();
+    });
+
     return (
         <View style={styles.container}>
             <Text style={styles.header1}>Hello {ref.current.first_name}</Text>
