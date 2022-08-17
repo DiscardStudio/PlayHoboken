@@ -5,43 +5,28 @@ import DropdownComponent from "../components/DropdownComponent";
 const Find = (props, ref) => {
     const createSession = useRef("");
     const [sessions, setSession] = useState([
-        {
-            key: 0,
-            first_name: "John",
-            last_name: "Doe",
-            timeslot: "2022-08-10 04:05:06",
-            game: "Chess"
-        },
-        {
-            key: 1,
-            first_name: "Jane",
-            last_name: "Doe",
-            timeslot: "2022-08-03 04:05:06",
-            game: "Chess"
-        }
-    ].map(x=>
-        <View key={x.key} style={styles.find}>
-            <Text>{x.first_name+" "+x.last_name+" started playing "+x.game+" at "+x.timeslot}</Text>
+        <View key={0} style={styles.find}>
+            <Text>Loading...</Text>
         </View>
-    ));
+    ]);
 
     useEffect(() => {
-        fetch('https://play-hoboken.herokuapp.com/find-session', {
-            method: 'get',
-            headers: {
-                Accept: 'application/json',
-                'Content-Type': 'application/json'
-            }
-        })
-        .then(json => {
-            setSession(json.rows.map(x=>
+        return fetch('https://play-hoboken.herokuapp.com/find-session')
+        .then(res => res.status == 200 ? res.json(): {status: 404})
+        .then(data => 
+            data.status === 404 ?
+            setSession([
+                <View key={0} style={styles.find}>
+                    <Text>Nobodys here. Be the first player of the day!</Text>
+                </View>
+            ]):
+            setSession(data.rows.map(x=>
                 <View key={x.key} style={styles.find}>
                     <Text>{x.first_name+" "+x.last_name+" started playing "+x.game+" at "+x.timeslot}</Text>
                 </View>
-            ));
-        }, err=> console.error(err))
-        .catch(err => console.error(err)).done();
-    });
+            )))
+        .catch(err => console.error(err)).done();            
+    },[createSession]);
 
     return (
         <View style={styles.container}>

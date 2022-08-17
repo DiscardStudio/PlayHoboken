@@ -74,6 +74,7 @@ app.post('/signup', (req, res) => {
                 return console.error('Error executing query', err.stack);
             }
             res.status(200);
+            return console.log("Success");
         });
     });
 });
@@ -104,8 +105,10 @@ app.post('/create-session', (req, res) => {
                 res.status(403);
                 return console.error('Error');
             }
-            else
+            else{
                 res.status(200);
+                return console.log("Success");
+            }
         });
     });
     for(var x=0;x<result.rows.length; x++) {
@@ -142,9 +145,10 @@ app.get('/find-session', (req, res) => {
         if (result.rows.length > 0) {
             res.status(200);
             res.json({rows:result.rows});
-            return console.write('Sent Sessions');
+            return console.log('Sent Sessions');
         }
         res.status(404);
+        return console.log("Not found");
         
     });
 });
@@ -163,9 +167,10 @@ app.post('/my-sessions', (req, res) => {
         if (result.rows.length > 0) {
             res.status(200);
             res.json({rows:result.rows});
-            return console.write('Sent Sessions');
+            return console.log('Sent Sessions');
         }
         res.status(404);
+        return console.log("Not found");
         
     });
 });

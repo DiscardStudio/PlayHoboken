@@ -1,6 +1,8 @@
 import { forwardRef, useState, useLayoutEffect } from "react";
 import { StyleSheet, Text, View, Button } from "react-native";
-
+/**
+ * TODO: Add ability to add to interests table. May be more efficient to do so by use of the Create-Session backend
+ */
 const Profile=(props,ref) => {
     const [sessions, setSession] = useState([
         {
