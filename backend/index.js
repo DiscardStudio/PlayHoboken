@@ -102,7 +102,7 @@ app.post('/create-session', (req, res) => {
         pool.query(`
             select users.email, users.first_name
             from users, interests
-            where users.email=interests.email and '${req.body.game}'=any interests.games`, 
+            where users.email=interests.email and '${req.body.game}'=any(interests.games)`, 
             (err, result2) => {
             if (err) {
                 res.status(403);
