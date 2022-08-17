@@ -14,7 +14,7 @@ const Find = (props, ref) => {
         return fetch('https://play-hoboken.herokuapp.com/find-session')
         .then(res => {return {status: res.status, data: res.json()}})
         .then(data => 
-            data.status === 404 ?
+            data.status !== 200 ?
             setSession([
                 <View key={0} style={styles.find}>
                     <Text>Nobodys here. Be the first player of the day!</Text>

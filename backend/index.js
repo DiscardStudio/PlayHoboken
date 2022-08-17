@@ -106,7 +106,7 @@ app.post('/create-session', (req, res) => {
             (err, result2) => {
             if (err) {
                 res.status(403);
-                return console.error('Error');
+                return console.error(err.stack);
             }
             else{
                 res.status(200);
