@@ -55,6 +55,8 @@ from iss inner join ua on(ua.email=iss.email)
 
 app.use(express.json());
 
+app.get('/', (req, res) => res.status(200));
+
 app.post('/signup', (req, res) => {
     console.log(req.body);
     pool.query(`select email from auth where email='${req.body.email}'`, 
@@ -108,27 +110,27 @@ app.post('/create-session', (req, res) => {
             }
             else{
                 res.status(200);
+                for(var x=0;x<result2.rows.length; x++) {
+                    var mailOptions = {
+                        from: 'noreply@playhoboken.com',
+                        to: result.rows[x].email,
+                        subject: `${req.body.first_name} is playing one of your favorite games!`,
+                        text: `Dear ${result2.rows[x].first_name},\n Come by today right now to play your favorite game with ${req.body.first_name}!\n\n Note: This is an automated message, please direct any questions you have to https://playhoboken.com`
+                    };
+                    transporter.sendMail(mailOptions, function(error, info){
+                        if (error) {
+                            console.log(error);
+                            res.status(500);
+                        } else {
+                            console.log('Email sent: ' + info.response);
+                            res.status(200);
+                        }
+                    });
+                }
                 return console.log("Success");
             }
         });
     });
-    for(var x=0;x<result.rows.length; x++) {
-        var mailOptions = {
-            from: 'noreply@playhoboken.com',
-            to: result.rows[x].email,
-            subject: `${req.body.first_name} is playing one of your favorite games!`,
-            text: `Dear ${result2.rows[x].first_name},\n Come by today right now to play your favorite game with ${req.body.first_name}!\n\n Note: This is an automated message, please direct any questions you have to https://playhoboken.com`
-        };
-        transporter.sendMail(mailOptions, function(error, info){
-            if (error) {
-                console.log(error);
-                res.status(500);
-            } else {
-                console.log('Email sent: ' + info.response);
-                res.status(200);
-            }
-        });
-    }
 });
 
 app.get('/find-session', (req, res) => {
