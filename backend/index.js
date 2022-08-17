@@ -15,7 +15,7 @@ const pool = new Client({
 });
 
 pool.connect();
-/*
+/*  postgresql
     create table users (
     email varchar(32) primary key,
     first_name varchar(32) not null,
@@ -40,14 +40,16 @@ pool.connect();
     email varchar(32) primary key,
     games text[] not null
     );
+
+
 with ua as (
     select users.email, users.first_name, users.last_name, auth.passhash
     from users inner join auth on (users.email=auth.email)
 ), iss as (
-    select sessions.email, sessions.games, sessions.first_name, sessions.last_name, sessions.timeslot
+    select sessions.email, sessions.games, sessions.first_name, sessions.last_name, sessions.session_date, sessions.session_time
     from sessions full outer join interests on (sessions.email=interests.email)
 )
-select iss.email, iss.first_name, iss.last_name, iss.timeslot, ua.passhash, iss.games
+select iss.email, iss.first_name, iss.last_name, iss.session_time,iss.session_date, ua.passhash, iss.games
 from iss inner join ua on(ua.email=iss.email)
 */
 
@@ -148,10 +150,10 @@ app.get('/find-session', (req, res) => {
     });
 });
 
-app.get('/my-sessions', (req, res) => {
+app.post('/my-sessions', (req, res) => {
     pool.query(`select first_name, last_name, session_time, game
                 from sessions
-                where sessions.email = '${req.query.email}'
+                where sessions.email = '${req.body.email}'
                 order by session_time
                 `, 
         (err, result) => {

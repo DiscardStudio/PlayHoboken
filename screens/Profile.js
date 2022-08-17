@@ -21,7 +21,7 @@ const Profile=(props,ref) => {
 
     useLayoutEffect(() => {
         fetch('https://play-hoboken.herokuapp.com/my-sessions', {
-            method: 'GET',
+            method: 'POST',
             headers: {
                 Accept: 'application/json',
                 'Content-Type': 'application/json'
