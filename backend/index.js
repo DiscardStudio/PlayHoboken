@@ -167,7 +167,6 @@ app.post('/my-sessions', (req, res) => {
             return console.write('Sent Sessions');
         }
         res.status(404);
-        return console.write('No Sessions Found');
         
     });
 });
