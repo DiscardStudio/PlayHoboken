@@ -126,6 +126,7 @@ app.post('/create-session', (req, res) => {
 });
 
 app.get('/find-session', (req, res) => {
+    const date = new Date();
     pool.query(`select first_name, last_name, session_time, game
                 from sessions
                 where sessions.session_date = '${date.getMonth()+"/"+date.getDay()+"/"+date.getFullYear()}'

@@ -1,4 +1,4 @@
-import { forwardRef, useState } from "react";
+import { forwardRef, useState, useLayoutEffect } from "react";
 import { StyleSheet, Text, View, Button } from "react-native";
 
 const Profile=(props,ref) => {
@@ -21,7 +21,7 @@ const Profile=(props,ref) => {
 
     useLayoutEffect(() => {
         fetch('https://play-hoboken.herokuapp.com/my-sessions', {
-            method: 'get',
+            method: 'GET',
             headers: {
                 Accept: 'application/json',
                 'Content-Type': 'application/json'
