@@ -90,6 +90,7 @@ var transporter = Mailer.createTransport({
 });
 
 app.post('/create-session', (req, res) => {
+    const date = new Date();
     pool.query(`insert into sessions(email, first_name, last_name, session_date, session_time, game) values ('${req.body.email}','${req.body.first_name}','${req.body.last_name}',${date.getMonth()+"/"+date.getDay()+"/"+date.getFullYear()},${date.getHours()%12+":"+date.getMinutes()},'${req.body.game}')`, 
         (err, result) => {
         if (result && result.rows && result.rows.length > 0) {
@@ -171,7 +172,6 @@ app.post('/my-sessions', (req, res) => {
         }
         res.status(404);
         return console.log("Not found");
-        
     });
 });
 

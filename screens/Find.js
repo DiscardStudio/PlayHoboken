@@ -12,7 +12,7 @@ const Find = (props, ref) => {
 
     useEffect(() => {
         return fetch('https://play-hoboken.herokuapp.com/find-session')
-        .then(res => res.status == 200 ? res.json(): {status: 404})
+        .then(res => {return {status: res.status, data: res.json()}})
         .then(data => 
             data.status === 404 ?
             setSession([
@@ -21,12 +21,32 @@ const Find = (props, ref) => {
                 </View>
             ]):
             setSession(data.rows.map(x=>
-                <View key={x.key} style={styles.find}>
-                    <Text>{x.first_name+" "+x.last_name+" started playing "+x.game+" at "+x.timeslot}</Text>
+                <View key={x.session_time} style={styles.find}>
+                    <Text>{x.first_name+" "+x.last_name+" started playing "+x.game+" at "+x.session_time}</Text>
                 </View>
             )))
         .catch(err => console.error(err)).done();            
-    },[createSession]);
+    });
+
+    const sessionCreation = () => {
+        return fetch('https://play-hoboken.herokuapp.com/create-session', {
+            method: 'POST',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                email: ref.email,
+                game: createSession.current
+            })
+        })
+        .then(res => res.status === 200? setSession([
+            <View key={0} style={styles.find}>
+                <Text>Loading...</Text>
+            </View>
+        ]):console.error("Error creating session"))
+        .catch(err => console.error(err)).done();
+    }
 
     return (
         <View style={styles.container}>
@@ -37,12 +57,7 @@ const Find = (props, ref) => {
             <Text style={styles.header3}>Start Your Own Session!</Text>
             <Text />
             <DropdownComponent ref={createSession}/>
-            <Button title="Make Session" onPress={e => (createSession.current === null? console.error('Please Select a Game Before Creating a Session'):setSession([{
-                first_name: ref.current.first_name,
-                last_name: ref.current.last_name,
-                timeslot: "2022-08-10 04:05:06",
-                game: createSession.current
-            },]+sessions))} />
+            <Button title="Make Session" onPress={e => sessionCreation()} />
         </View>
     );
 }
