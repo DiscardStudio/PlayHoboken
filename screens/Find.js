@@ -1,4 +1,4 @@
-import { forwardRef, useLayoutEffect, useRef, useState } from "react";
+import { forwardRef, useLayoutEffect, useEffect, useRef, useState } from "react";
 import { StyleSheet, Text, View, Button } from "react-native";
 import DropdownComponent from "../components/DropdownComponent";
 
@@ -19,10 +19,13 @@ const Find = (props, ref) => {
             timeslot: "2022-08-03 04:05:06",
             game: "Chess"
         }
-    ]);
+    ].map(x=>
+        <View key={x.key} style={styles.find}>
+            <Text>{x.first_name+" "+x.last_name+" started playing "+x.game+" at "+x.timeslot}</Text>
+        </View>
+    ));
 
-    //create useEffect to enable backend query
-    useLayoutEffect(() => {
+    useEffect(() => {
         fetch('https://play-hoboken.herokuapp.com/find-session', {
             method: 'get',
             headers: {
@@ -31,7 +34,11 @@ const Find = (props, ref) => {
             }
         })
         .then(json => {
-            setSession(json.rows);
+            setSession(json.rows.map(x=>
+                <View key={x.key} style={styles.find}>
+                    <Text>{x.first_name+" "+x.last_name+" started playing "+x.game+" at "+x.timeslot}</Text>
+                </View>
+            ));
         }, err=> console.error(err))
         .catch(err => console.error(err)).done();
     });
@@ -39,11 +46,7 @@ const Find = (props, ref) => {
     return (
         <View style={styles.container}>
             <Text style={styles.header1}>Who's Playing?</Text>
-            {sessions.map(x=>
-                <View key={x.key} style={styles.find}>
-                    <Text>{x.first_name+" "+x.last_name+" started playing "+x.game+" at "+x.timeslot}</Text>
-                </View>
-            )}
+            {sessions}
             <View style={styles.break}/>
             <Text style={styles.header2}>Nobody Playing Your Game?</Text>
             <Text style={styles.header3}>Start Your Own Session!</Text>
