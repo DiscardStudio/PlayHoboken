@@ -18,7 +18,6 @@ const Login = (props) => {
                 passhash: hash
             })
         })
-        .then(json => {return json.body} )
         .then(json => {
             console.log(json, email, hash);
             if(json.email === undefined)

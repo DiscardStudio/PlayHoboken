@@ -174,7 +174,7 @@ app.get('/find-session', (req, res) => {
         res.send(result.rows);
         return console.log('Sent Sessions');
     }
-    res.send({rows: "Nobodys here. Be the first player of the day!"})
+    res.json({rows: "Nobodys here. Be the first player of the day!"})
     return console.log("Not found");
 });
 
@@ -205,7 +205,7 @@ app.post('/login', (req,res) => {
         res.status(404);
         return console.error('Error executing query', err.stack);
     }
-    res.send(result.rows[0]);
+    res.json(result.rows[0]);
 });
 
 app.listen(port, () => {
