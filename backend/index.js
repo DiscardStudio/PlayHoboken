@@ -196,14 +196,14 @@ app.post('/my-sessions', (req, res) => {
     return console.log("Not found");
 });
 
-app.post('/login', (req,res) => {
-    const result = callQuery(`select users.email, users.first_name, users.last_name
+app.post('/login', async (req,res) => {
+    const result = await callQuery(`select users.email, users.first_name, users.last_name
     from users inner join auth on (users.email=auth.email)
     where users.email='${req.body.email}' and auth.passhash='${req.body.passhash}'`);
 
-    if(result.stack) {
+    if(result.stack || result===undefined) {
         res.status(404);
-        return console.error('Error executing query', err.stack);
+        return console.error('Error executing query', result.stack);
     }
     res.json(result.rows[0]);
 });
