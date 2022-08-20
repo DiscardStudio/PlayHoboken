@@ -1,15 +1,15 @@
-import { useState, forwardRef } from "react";
+import { useState } from "react";
 import { StyleSheet, View, Button } from "react-native";
 import Find from './Find.js';
 import Home from './Home.js';
 import Profile from './Profile.js';
 
-const Play = (props,ref) => {
+const Play = (props) => {
     const [page, toggle] = useState(0);
     return (
 
         <View style={styles.play}>
-           {page === 0? <Home/>: (page === 1? <Find ref={ref}/>: <Profile render={props.render} ref={ref}/>)}
+           {page === 0? <Home/>: (page === 1? <Find login={props.login}/>: <Profile render={props.render} login={props.login}/>)}
            <View style={styles.nav}>
                 <Button style={styles.navButtons} title="Home" onPress={e => toggle(0)}/>
                 <Button style={styles.navButtons} title="Find Session" onPress={e => toggle(1)}/>
@@ -54,4 +54,4 @@ const styles = StyleSheet.create({
     },
   });
 
-export default forwardRef(Play);
+export default Play;

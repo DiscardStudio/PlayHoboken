@@ -149,10 +149,10 @@ app.get('/find-session', (req, res) => {
             return console.error('Error finding sessions');
         }
         if (result.rows.length > 0) {
-            res.json({rows:result.rows});
+            res.send({rows:result.rows});
             return console.log('Sent Sessions');
         }
-        res.json({rows: "Nobodys here. Be the first player of the day!"})
+        res.send({rows: "Nobodys here. Be the first player of the day!"})
         return console.log("Not found");
         
     });
@@ -170,7 +170,7 @@ app.post('/my-sessions', (req, res) => {
             return console.error('Error finding sessions');
         }
         if (result.rows.length > 0) {
-            res.json({rows:result.rows});
+            res.send({rows:result.rows});
             return console.log('Sent Sessions');
         }
         res.status(404);
@@ -187,7 +187,7 @@ app.post('/login', (req,res) => {
             res.status(404);
             return console.error('Error executing query', err.stack);
         }
-        res.json({result: result.rows[0]});
+        res.send({result: result.rows[0]});
     });
 });
 

@@ -1,8 +1,8 @@
-import { forwardRef, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { StyleSheet, Text, View, TextInput, Button } from "react-native";
 import useHash from "../components/useHash";
 
-const Login = (props, ref) => {
+const Login = (props) => {
     const [email, setEmail] = useState("");
     const [hash, setHash] = useHash();
 
@@ -18,20 +18,17 @@ const Login = (props, ref) => {
                 passhash: hash
             })
         })
-        .then(json => {return {status: json.status, data: json.json()}} )
+        .then(json => {return json.json()} )
         .then(json => {
-            if(json.status !== 200)
+            console.log(json, email, hash);
+            if(json.email === undefined)
                 return console.error("Error Logging in");
             else {
-                ref.current = {
-                    email: json.data.email,
-                    first_name: json.data.first_name,
-                    last_name: json.data.last_name
-                };
+                console.log(json, email, hash);
                 props.render({
                     email: email,
-                    first_name: json.data.first_name,
-                    last_name: json.data.last_name
+                    first_name: json.first_name,
+                    last_name: json.last_name
                 });
         }
         }, err=> console.error(err))
@@ -63,4 +60,4 @@ const styles = StyleSheet.create({
     },
   });
 
-export default forwardRef(Login);
+export default Login;

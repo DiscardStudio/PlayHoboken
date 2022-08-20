@@ -1,27 +1,27 @@
-import { forwardRef, useState, useLayoutEffect } from "react";
+import { useState, useEffect } from "react";
 import { StyleSheet, Text, View, Button } from "react-native";
 /**
  * TODO: Add ability to add to interests table. May be more efficient to do so by use of the Create-Session backend
  */
-const Profile=(props,ref) => {
+const Profile=(props) => {
     const [sessions, setSession] = useState([
         {
             key: 0,
-            first_name: ref.current.first_name,
-            last_name: ref.current.last_name,
+            first_name: props.login.first_name,
+            last_name: props.login.last_name,
             timeslot: "2022-08-10 04:05:06",
             game: "Chess"
         },
         {
             key: 1,
-            first_name: ref.current.first_name,
-            last_name: ref.current.last_name,
+            first_name: props.login.first_name,
+            last_name: props.login.last_name,
             timeslot: "2022-08-03 04:05:06",
             game: "Chess"
         }
     ]);
 
-    useLayoutEffect(() => {
+    useEffect(() => {
         fetch('https://play-hoboken.herokuapp.com/my-sessions', {
             method: 'POST',
             headers: {
@@ -29,7 +29,7 @@ const Profile=(props,ref) => {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                email: ref.email
+                email: props.login.email
             })
         })
         .then(json => {
@@ -40,7 +40,7 @@ const Profile=(props,ref) => {
 
     return (
         <View style={styles.container}>
-            <Text style={styles.header1}>Hello {ref.current.first_name}</Text>
+            <Text style={styles.header1}>Hello {props.login.first_name}</Text>
             <Text style={styles.header2}>You've Played:</Text>
             
             <Text/>
@@ -115,4 +115,4 @@ const styles = StyleSheet.create({
     }
 });
 
-export default forwardRef(Profile);
+export default Profile;

@@ -1,21 +1,16 @@
-import { useState, useRef, useLayoutEffect } from "react";
+import { useState, useLayoutEffect } from "react";
 import { StyleSheet, View, Button } from "react-native";
 import Play from './Play.js';
 import Signup from './Signup.js';
 import Login from './Login.js';
 
 export default Auth = (props) => {
-    const [userState, render] = useState({
+    const [user, render] = useState({
         email: null,
         first_name: null,
         last_name: null
     });
     const [page, toggle] = useState(0);
-    const user = useRef({
-        email: null,
-        first_name: null,
-        last_name: null
-    });
 
     function logout() {
         render({
@@ -23,26 +18,21 @@ export default Auth = (props) => {
             first_name: null,
             last_name: null
         });
-        user.current = {
-            email: null,
-            first_name: null,
-            last_name: null
-        };
         toggle(0);
     }
 
     useLayoutEffect(() => {
-        if(userState.email != null)
+        if(user.email != null)
             toggle(2);
     });
 
     return (
         page < 2?
         <View style={styles.container}>
-            {page === 0 ? <Login ref={user} render={render}/>:<Signup ref={user} render={render}/>}
+            {page === 0 ? <Login login={user} render={render}/>:<Signup login={user} render={render}/>}
             <Button style={{position: 'relative',margin: 5}}title={page===0? "Not a Player? Join Today!":"Already a Player? Sign in!"} onPress={()=>page===0?toggle(1):toggle(0)}/>
         </View>:
-        <Play ref={user} render={logout}/>
+        <Play login={user} render={logout}/>
     );
 }
 

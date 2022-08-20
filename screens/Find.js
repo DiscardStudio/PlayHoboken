@@ -1,8 +1,8 @@
-import { forwardRef, useLayoutEffect, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { StyleSheet, Text, View, Button } from "react-native";
 import DropdownComponent from "../components/DropdownComponent";
 
-const Find = (props, ref) => {
+const Find = (props) => {
     const createSession = useRef("");
     const [shouldQuery, setShouldQuery] = useState(true);
     const [sessions, setSession] = useState([
@@ -40,7 +40,7 @@ const Find = (props, ref) => {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                email: ref.email,
+                email: props.login.email,
                 game: createSession.current
             })
         })
@@ -121,4 +121,4 @@ const styles = StyleSheet.create({
     }
 });
 
-export default forwardRef(Find);
+export default Find;

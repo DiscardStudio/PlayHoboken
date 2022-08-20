@@ -1,15 +1,14 @@
-import { forwardRef, useEffect, useState } from "react";
-import { StyleSheet, Text, View, TextInput, Button } from "react-native";
+import { useEffect, useState } from "react";
+import { StyleSheet, View, TextInput, Button } from "react-native";
 import useHash from "../components/useHash";
 
-const Signup = (props, ref) => {
+const Signup = (props) => {
     const [fname, setFName] = useState("");
     const [lname, setLName] = useState("");
     const [email, setEmail] = useState("");
     const [pass, setPass] = useState("");
     const [confirm, setConfirm] = useState("");
     const [hash, setHash] = useHash();
-    const [xhr, setXhr] = useState(new XMLHttpRequest());
 
     async function fetch_signup() {
         await setHash(pass);
@@ -26,11 +25,6 @@ const Signup = (props, ref) => {
                 last_name: lname
             })
         }).then(() => {
-            ref.current = {
-                email: email,
-                first_name: fname,
-                last_name: lname
-            };
             props.render({
                 email: email,
                 first_name: fname,
@@ -56,11 +50,11 @@ const Signup = (props, ref) => {
                 setEmail(e);
                 }} placeholder="Email"/>
             <TextInput secureTextEntry={true} style={styles.inputs} onChangeText={e=>{
-                setPass();
+                setPass(e);
                 e===confirm? setHash(e):console.error("Passwords must match")
                 }} placeholder="Password"/>
             <TextInput secureTextEntry={true} style={styles.inputs} onChangeText={e=>{
-                setConfirm();
+                setConfirm(e);
                 e===pass? setHash(e):console.error("Passwords must match")
                 }} placeholder="Confirm Password"/>
             <Button title="Submit" onPress={e=>fetch_signup()}/>
@@ -85,4 +79,4 @@ const styles = StyleSheet.create({
     },
   });
 
-export default forwardRef(Signup);
+export default Signup;
