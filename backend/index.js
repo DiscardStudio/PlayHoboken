@@ -99,6 +99,8 @@ app.post('/create-session', (req, res) => {
             res.status(403);
             return console.error('Session already exists');
         }
+        res.status(200);
+        /*
         pool.query(`
             select users.email, users.first_name
             from users, interests
@@ -110,6 +112,7 @@ app.post('/create-session', (req, res) => {
             }
             else{
                 res.status(200);
+                
                 for(var x=0;x<result2.rows.length; x++) {
                     var mailOptions = {
                         from: 'noreply@playhoboken.com',
@@ -129,7 +132,7 @@ app.post('/create-session', (req, res) => {
                 }
                 return console.log("Success");
             }
-        });
+        });*/
     });
 });
 

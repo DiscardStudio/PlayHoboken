@@ -15,23 +15,22 @@ const Find = (props, ref) => {
         setShouldQuery(false);
         return fetch('https://play-hoboken.herokuapp.com/find-session')
         .then(res => {
-            console.table(res);
-            return {status: res.status, data: res.json()
-        };})
+            return {status: res.status, rows: res.json().rows
+        }})
         .then(data => 
-            typeof data.rows === typeof '' ?
+            data.rows === undefined ?
             setSession([
                 <View key={0} style={styles.find}>
-                    <Text>{data.rows}</Text>
+                    <Text>Nobodys here. Be the first player of the day!</Text>
                 </View>
             ]):
-            setSession(data.data.rows.map(x=>
+            setSession(data.rows.map(x=>
                 <View key={x.session_time} style={styles.find}>
                     <Text>{x.first_name+" "+x.last_name+" started playing "+x.game+" at "+x.session_time}</Text>
                 </View>
             )))
         .catch(err => console.error(err)).done();            
-    },[setShouldQuery]);
+    },[shouldQuery]);
 
     const sessionCreation = () => {
         return fetch('https://play-hoboken.herokuapp.com/create-session', {
@@ -62,9 +61,8 @@ const Find = (props, ref) => {
             <Text style={styles.header3}>Start Your Own Session!</Text>
             <Text />
             <DropdownComponent ref={createSession}/>
-            <Button title="Make Session" onPress={async e => {
-                await sessionCreation();
-                await setShouldQuery(true);
+            <Button title="Make Session" onPress={e => {
+                sessionCreation();
             }} />
         </View>
     );
