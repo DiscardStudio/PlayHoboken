@@ -150,8 +150,8 @@ app.get('/find-session', (req, res) => {
             res.json({rows:result.rows});
             return console.log('Sent Sessions');
         }
-        res.status(404);
         res.json({rows: "Nobodys here. Be the first player of the day!"})
+        res.status(404);
         return console.log("Not found");
         
     });

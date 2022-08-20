@@ -4,6 +4,7 @@ import DropdownComponent from "../components/DropdownComponent";
 
 const Find = (props, ref) => {
     const createSession = useRef("");
+    const [shouldQuery, setShouldQuery] = useState(true);
     const [sessions, setSession] = useState([
         <View key={0} style={styles.find}>
             <Text>Loading...</Text>
@@ -11,6 +12,7 @@ const Find = (props, ref) => {
     ]);
 
     useEffect(() => {
+        setShouldQuery(false);
         return fetch('https://play-hoboken.herokuapp.com/find-session')
         .then(res => {return {status: res.status, data: res.json()}})
         .then(data => 
@@ -20,13 +22,13 @@ const Find = (props, ref) => {
                     <Text>{data.rows}</Text>
                 </View>
             ]):
-            setSession(data.rows.map(x=>
+            setSession(data.data.rows.map(x=>
                 <View key={x.session_time} style={styles.find}>
                     <Text>{x.first_name+" "+x.last_name+" started playing "+x.game+" at "+x.session_time}</Text>
                 </View>
             )))
         .catch(err => console.error(err)).done();            
-    });
+    },[setShouldQuery]);
 
     const sessionCreation = () => {
         return fetch('https://play-hoboken.herokuapp.com/create-session', {
@@ -57,7 +59,10 @@ const Find = (props, ref) => {
             <Text style={styles.header3}>Start Your Own Session!</Text>
             <Text />
             <DropdownComponent ref={createSession}/>
-            <Button title="Make Session" onPress={e => sessionCreation()} />
+            <Button title="Make Session" onPress={async e => {
+                await sessionCreation();
+                await setShouldQuery(true);
+            }} />
         </View>
     );
 }
