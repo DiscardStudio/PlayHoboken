@@ -170,6 +170,7 @@ app.post('/my-sessions', (req, res) => {
             return console.error('Error finding sessions');
         }
         if (result.rows.length > 0) {
+            console.table(result.rows[0]);
             res.send({rows:result.rows});
             return console.log('Sent Sessions');
         }
