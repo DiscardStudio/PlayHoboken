@@ -19,7 +19,7 @@ const Find = (props, ref) => {
             return {status: res.status, data: res.json()
         };})
         .then(data => 
-            data.status !== 200 ?
+            typeof data.rows === typeof '' ?
             setSession([
                 <View key={0} style={styles.find}>
                     <Text>{data.rows}</Text>
