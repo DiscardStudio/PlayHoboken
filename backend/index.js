@@ -147,11 +147,10 @@ app.get('/find-session', (req, res) => {
         }
         if (result.rows.length > 0) {
             res.status(200);
-            res.json({rows:result.rows});
+            res.json({rows:result.rows, status: 200});
             return console.log('Sent Sessions');
         }
-        res.json({rows: "Nobodys here. Be the first player of the day!"})
-        res.status(404);
+        res.json({rows: "Nobodys here. Be the first player of the day!", status: 404})
         return console.log("Not found");
         
     });

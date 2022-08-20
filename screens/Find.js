@@ -14,7 +14,10 @@ const Find = (props, ref) => {
     useEffect(() => {
         setShouldQuery(false);
         return fetch('https://play-hoboken.herokuapp.com/find-session')
-        .then(res => {return {status: res.status, data: res.json()}})
+        .then(res => {
+            console.table(res);
+            return {status: res.status, data: res.json()
+        };})
         .then(data => 
             data.status !== 200 ?
             setSession([
