@@ -53,33 +53,44 @@ select iss.email, iss.first_name, iss.last_name, iss.session_time,iss.session_da
 from iss inner join ua on(ua.email=iss.email)
 */
 
+const callQuery = sql => {
+    return new Promise((resolve, reject) => {
+        pool.query(sql, (err, result) => {
+          if (err) {
+            reject(err);
+          }
+          else {
+            resolve(result);
+          }
+        });
+      });
+}
+
 app.use(express.json());
 
 app.get('/', (req, res) => res.status(200));
 
 app.post('/signup', (req, res) => {
-    console.log(req.body);
-    pool.query(`select email from auth where email='${req.body.email}'`, 
+    const result = callQuery(`select email from auth where email='${req.body.email}'`)
+    if(result.stack) {
+        res.status(404);
+        return console.error('Error executing query\n', err.stack);
+    }
+    if (result && result.rows && result.rows.length > 0) {
+        res.status(500);
+        return console.error('User already exists');
+    }
+    pool.query(`insert into auth(email,passhash) values('${req.body.email}','${req.body.passhash}'); insert into users(email, first_name, last_name) values ('${req.body.email}','${req.body.first_name}','${req.body.last_name}')`, 
         (err, result) => {
-        if(err) {
-            res.status(404);
-            return console.error('Error executing query\n', err.stack);
+        if (err) {
+            res.status(403);
+            return console.error('Error executing query', err.stack);
         }
-        if (result && result.rows && result.rows.length > 0) {
-            res.status(500);
-            return console.error('User already exists');
-        }
-        pool.query(`insert into auth(email,passhash) values('${req.body.email}','${req.body.passhash}'); insert into users(email, first_name, last_name) values ('${req.body.email}','${req.body.first_name}','${req.body.last_name}')`, 
-            (err, result) => {
-            if (err) {
-                res.status(403);
-                return console.error('Error executing query', err.stack);
-            }
-            res.status(200);
-            return console.log("Success");
-        });
+        res.status(200);
+        return console.log("Success");
     });
 });
+
 var transporter = Mailer.createTransport({
     service: 'smtp',
     host: 'playhoboken.com',
@@ -93,8 +104,21 @@ var transporter = Mailer.createTransport({
 
 app.post('/create-session', (req, res) => {
     const date = new Date();
-    pool.query(`insert into sessions(email, first_name, last_name, session_date, session_time, game) values ('${req.body.email}','${req.body.first_name}','${req.body.last_name}',${date.getMonth()+"/"+date.getDay()+"/"+date.getFullYear()},${date.getHours()%12+":"+date.getMinutes()},'${req.body.game}')`, 
-        (err, result) => {
+    const result = callQuery(`
+    insert into sessions(
+        email,
+        first_name,
+        last_name,
+        session_date,
+        session_time,
+        game)
+    values (
+        '${req.body.email}',
+        '${req.body.first_name}',
+        '${req.body.last_name}',
+        '${date.getMonth()+"/"+date.getDay()+"/"+date.getFullYear()}',
+        '${date.getHours()%12+":"+date.getMinutes()}',
+        '${req.body.game}')`);
         if (result && result.rows && result.rows.length > 0) {
             res.status(403);
             return console.error('Session already exists');
@@ -133,62 +157,55 @@ app.post('/create-session', (req, res) => {
                 return console.log("Success");
             }
         });*/
-    });
 });
 
 app.get('/find-session', (req, res) => {
     const date = new Date();
-    pool.query(`select first_name, last_name, session_time, game
+    const result = callQuery(`select first_name, last_name, session_time, game
                 from sessions
                 where sessions.session_date = '${date.getMonth()+"/"+date.getDay()+"/"+date.getFullYear()}'
                 order by session_time
-                `, 
-        (err, result) => {
-        if (err) {
-            res.status(403);
-            return console.error('Error finding sessions');
-        }
-        if (result.rows.length > 0) {
-            res.send(result.rows);
-            return console.log('Sent Sessions');
-        }
-        res.send({rows: "Nobodys here. Be the first player of the day!"})
-        return console.log("Not found");
-        
-    });
+                `)
+    if (result.stack) {
+        res.status(403);
+        return console.error('Error finding sessions');
+    }
+    if (result.rows.length > 0) {
+        res.send(result.rows);
+        return console.log('Sent Sessions');
+    }
+    res.send({rows: "Nobodys here. Be the first player of the day!"})
+    return console.log("Not found");
 });
 
 app.post('/my-sessions', (req, res) => {
-    pool.query(`select first_name, last_name, session_time, game
+    const result = callQuery(`select first_name, last_name, session_time, game
                 from sessions
                 where sessions.email = '${req.body.email}'
                 order by session_time
-                `, 
-        (err, result) => {
-        if (err) {
-            res.status(403);
-            return console.error('Error finding sessions');
-        }
-        if (result.rows.length > 0) {
-            res.send(result.rows);
-            return console.log('Sent Sessions');
-        }
-        res.status(404);
-        return console.log("Not found");
-    });
+                `);
+    if (result.stack) {
+        res.status(403);
+        return console.error('Error finding sessions');
+    }
+    if (result.rows > 0) {
+        res.send(result.rows);
+        return console.log('Sent Sessions');
+    }
+    res.status(404);
+    return console.log("Not found");
 });
 
 app.post('/login', (req,res) => {
-    pool.query(`select users.email, users.first_name, users.last_name
+    const result = callQuery(`select users.email, users.first_name, users.last_name
     from users inner join auth on (users.email=auth.email)
-    where users.email='${req.body.email}' and auth.passhash='${req.body.passhash}'`, 
-        (err, result) => {
-        if (err) {
-            res.status(404);
-            return console.error('Error executing query', err.stack);
-        }
-        res.send(result.rows[0]);
-    });
+    where users.email='${req.body.email}' and auth.passhash='${req.body.passhash}'`);
+
+    if(result.stack) {
+        res.status(404);
+        return console.error('Error executing query', err.stack);
+    }
+    res.send(result.rows[0]);
 });
 
 app.listen(port, () => {
