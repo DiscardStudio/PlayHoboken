@@ -73,10 +73,10 @@ app.get('/', (req, res) => res.status(200));
 app.post('/signup', async (req, res) => {
     const result = await callQuery(`select email from auth where email='${req.body.email}'`)
     if(result.stack) {
-        res.status(404);
+        await res.status(404);
         return console.error('Error executing query\n', err.stack);
     } else if (result && result.rows && result.rows.length > 0) {
-        res.status(500);
+        await res.status(500);
         return console.error('User already exists');
     } else {
         const result2 = await callQuery(`
@@ -85,10 +85,10 @@ app.post('/signup', async (req, res) => {
         insert into users(email, first_name, last_name)
         values ('${req.body.email}','${req.body.first_name}','${req.body.last_name}');`)
         if (result2.stack) {
-            res.status(403);
+            await res.status(403);
             return console.error('Error executing query', result2.stack);
         } else {
-            res.status(200);
+            await res.status(200);
             return console.log("Success");
         }
     }
