@@ -17,40 +17,40 @@ const pool = new Client({
 pool.connect();
 /*  postgresql
     create table users (
-    email varchar(32) primary key,
-    first_name varchar(32) not null,
-    last_name varchar(32) not null
+        email varchar(32) primary key,
+        first_name varchar(32) not null,
+        last_name varchar(32) not null
     );
     
     create table auth (
-    email varchar(32) primary key,
-    passhash varchar(32) not null
+        email varchar(32) primary key,
+        passhash varchar(32) not null
     );
     
     create table sessions (
-    email varchar(32) primary key,
-    first_name varchar(32) not null,
-    last_name varchar(32) not null,
-    session_date char(8) not null,
-    session_time char(5) not null,
-    game varchar(4) not null
+        email varchar(32) primary key,
+        first_name varchar(32) not null,
+        last_name varchar(32) not null,
+        session_date char(8) not null,
+        session_time char(5) not null,
+        game varchar(4) not null
     );
     
     create table interests (
-    email varchar(32) primary key,
-    games text[] not null
+        email varchar(32) primary key,
+        games text[] not null
     );
 
-
-with ua as (
-    select users.email, users.first_name, users.last_name, auth.passhash
-    from users inner join auth on (users.email=auth.email)
-), iss as (
-    select sessions.email, sessions.game, sessions.first_name, sessions.last_name, sessions.session_date, sessions.session_time
-    from sessions full outer join interests on (sessions.email=interests.email)
-)
-select iss.email, iss.first_name, iss.last_name, iss.session_time,iss.session_date, ua.passhash, iss.game
-from iss inner join ua on(ua.email=iss.email)
+    //For testing creation of database. Will output nothing except columns until users begin to create sessions.
+    with ua as (
+        select users.email, users.first_name, users.last_name, auth.passhash
+        from users inner join auth on (users.email=auth.email)
+    ), iss as (
+        select sessions.email, sessions.game, sessions.first_name, sessions.last_name, sessions.session_date, sessions.session_time
+        from sessions full outer join interests on (sessions.email=interests.email)
+    )
+    select iss.email, iss.first_name, iss.last_name, iss.session_time,iss.session_date, ua.passhash, iss.game
+    from iss inner join ua on(ua.email=iss.email)
 */
 
 const callQuery = sql => {
@@ -123,10 +123,10 @@ app.post('/create-session', async (req, res) => {
         '${date.getHours()%12+":"+date.getMinutes()}',
         '${req.body.game}')`);
         if (result && result.rows && result.rows.length > 0) {
-            res.status(403);
+            await res.status(403);
             return console.error('Session already exists');
         }
-        res.status(200);
+        await res.status(200);
         /*
         pool.query(`
             select users.email, users.first_name
@@ -170,15 +170,15 @@ app.get('/find-session', async (req, res) => {
                 order by session_time
                 `)
     if (result.stack) {
-        res.status(403);
+        await res.status(403);
         return console.error('Error finding sessions');
-    }
-    if (result.rows.length > 0) {
-        res.send(result.rows);
+    } else if (result.rows.length > 0) {
+        await res.send(result.rows);
         return console.log('Sent Sessions');
+    } else {
+        await res.json({rows: "Nobodys here. Be the first player of the day!"})
+        return console.log("Not found");
     }
-    res.json({rows: "Nobodys here. Be the first player of the day!"})
-    return console.log("Not found");
 });
 
 app.post('/my-sessions', async (req, res) => {
@@ -188,28 +188,28 @@ app.post('/my-sessions', async (req, res) => {
                 order by session_time
                 `);
     if (result.stack) {
-        res.status(403);
+        await res.status(403);
         return console.error('Error finding sessions');
-    }
-    if (result.rows > 0) {
-        res.send(result.rows);
+    } else if (result.rows > 0) {
+        await res.send(result.rows);
         return console.log('Sent Sessions');
+    } else{
+        await res.status(404);
+        return console.log("Not found");
     }
-    res.status(404);
-    return console.log("Not found");
 });
 
 app.post('/login', async (req,res) => {
     const result = await callQuery(`select users.email, users.first_name, users.last_name
     from users inner join auth on (users.email=auth.email)
     where users.email='${req.body.email}' and auth.passhash='${req.body.passhash}'`);
-
     if(result.stack || result===undefined) {
-        res.status(404);
+        await res.status(404);
         return console.error('Error executing query', result.stack);
+    } else {
+        await res.json(result.rows[0]);
+        return console.log(result.rows[0]);
     }
-    res.json(result.rows[0]);
-    return console.log(result.rows[0]);
 });
 
 app.listen(port, () => {
