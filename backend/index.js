@@ -46,10 +46,10 @@ with ua as (
     select users.email, users.first_name, users.last_name, auth.passhash
     from users inner join auth on (users.email=auth.email)
 ), iss as (
-    select sessions.email, sessions.games, sessions.first_name, sessions.last_name, sessions.session_date, sessions.session_time
+    select sessions.email, sessions.game, sessions.first_name, sessions.last_name, sessions.session_date, sessions.session_time
     from sessions full outer join interests on (sessions.email=interests.email)
 )
-select iss.email, iss.first_name, iss.last_name, iss.session_time,iss.session_date, ua.passhash, iss.games
+select iss.email, iss.first_name, iss.last_name, iss.session_time,iss.session_date, ua.passhash, iss.game
 from iss inner join ua on(ua.email=iss.email)
 */
 
@@ -80,15 +80,16 @@ app.post('/signup', (req, res) => {
         res.status(500);
         return console.error('User already exists');
     }
-    pool.query(`insert into auth(email,passhash) values('${req.body.email}','${req.body.passhash}'); insert into users(email, first_name, last_name) values ('${req.body.email}','${req.body.first_name}','${req.body.last_name}')`, 
-        (err, result) => {
-        if (err) {
-            res.status(403);
-            return console.error('Error executing query', err.stack);
-        }
-        res.status(200);
-        return console.log("Success");
-    });
+    const result2 = callQuery(`
+    insert into auth(email,passhash)
+    values('${req.body.email}','${req.body.passhash}');
+    insert into users(email, first_name, last_name) values ('${req.body.email}','${req.body.first_name}','${req.body.last_name}');`)
+    if (result2.stack) {
+        res.status(403);
+        return console.error('Error executing query', result2.stack);
+    }
+    res.status(200);
+    return console.log("Success");
 });
 
 var transporter = Mailer.createTransport({
