@@ -105,29 +105,7 @@ var transporter = Mailer.createTransport({
     },
 });
 
-app.post('/create-session', async (req, res) => {
-    const date = new Date();
-    const result = await callQuery(`
-    insert into sessions(
-        email,
-        first_name,
-        last_name,
-        session_date,
-        session_time,
-        game)
-    values (
-        '${req.body.email}',
-        '${req.body.first_name}',
-        '${req.body.last_name}',
-        '${date.getMonth()+"/"+date.getDay()+"/"+date.getFullYear()}',
-        '${date.getHours()%12+":"+date.getMinutes()}',
-        '${req.body.game}')`);
-        if (result && result.rows && result.rows.length > 0) {
-            await res.status(403);
-            return console.error('Session already exists');
-        }
-        await res.status(200);
-        /*
+/*  notification template via email
         pool.query(`
             select users.email, users.first_name
             from users, interests
@@ -160,6 +138,49 @@ app.post('/create-session', async (req, res) => {
                 return console.log("Success");
             }
         });*/
+app.put('/create-session', async (req, res) => {
+    const date = new Date();
+    const result = await callQuery(`
+    insert into sessions(
+        email,
+        first_name,
+        last_name,
+        session_date,
+        session_time,
+        game)
+    values (
+        '${req.body.email}',
+        '${req.body.first_name}',
+        '${req.body.last_name}',
+        '${date.getMonth()+"/"+date.getDay()+"/"+date.getFullYear()}',
+        '${date.getHours()%12+":"+date.getMinutes()}',
+        '${req.body.game}')`);
+        if (result && result.rows && result.rows.length > 0) {
+            await res.status(403);
+            return console.error('Session already exists');
+        } else {
+            const checkInterest = await callQuery(`
+                select games
+                from interests
+                where interests.email='${req.body.email}';
+            `);
+            if(checkInterest.rows !== undefined){
+                var interestExists=false;
+                for(var x=0;x<checkInterest.rows.games.length; x++) {
+                    if(checkInterest.rows.games[x] === req.body.game){
+                        interestExists=true;
+                        break;
+                    }
+                }
+                if(!interestExists)
+                    await callQuery(`
+                        update interests
+                        set games = {${req.body.passhash},${checkInterest.rows.games.map(x=> `, {${x}}`)}}
+                        where email = '${req.body.email}';
+                    `);
+            }
+            await res.status(200);
+        }
 });
 
 app.get('/find-session', async (req, res) => {
@@ -190,8 +211,8 @@ app.post('/my-sessions', async (req, res) => {
     if (result.stack) {
         await res.status(403);
         return console.error('Error finding sessions');
-    } else if (result.rows > 0) {
-        await res.send(result.rows);
+    } else if (result.rows !== undefined && result.rows > 0) {
+        await res.json(result.rows);
         return console.log('Sent Sessions');
     } else{
         await res.status(404);

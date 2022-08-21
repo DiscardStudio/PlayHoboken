@@ -1,27 +1,18 @@
-import { useState, useEffect } from "react";
+import { useState, useLayoutEffect } from "react";
 import { StyleSheet, Text, View, Button } from "react-native";
 /**
  * TODO: Add ability to add to interests table. May be more efficient to do so by use of the Create-Session backend
  */
 const Profile=(props) => {
-    const [sessions, setSession] = useState([
-        {
-            key: 0,
-            first_name: props.login.first_name,
-            last_name: props.login.last_name,
-            timeslot: "2022-08-10 04:05:06",
-            game: "Chess"
-        },
-        {
-            key: 1,
-            first_name: props.login.first_name,
-            last_name: props.login.last_name,
-            timeslot: "2022-08-03 04:05:06",
-            game: "Chess"
-        }
-    ]);
+    const [sessions, setSession] = useState([{
+        key: 0,
+        first_name: "You",
+        last_name: "haven't",
+        timeslot: "all!",
+        game: "any games"
+    }]);
 
-    useEffect(() => {
+    useLayoutEffect(() => {
         fetch('https://play-hoboken.herokuapp.com/my-sessions', {
             method: 'POST',
             headers: {
@@ -32,8 +23,18 @@ const Profile=(props) => {
                 email: props.login.email
             })
         })
-        .then(json => {
-            setSession(json.rows);
+        .then(json => json.json)
+        .then(async json => {
+            if(json.rows !== undefined)
+                await setSession([{
+                    key: 0,
+                    first_name: "You",
+                    last_name: "haven't",
+                    timeslot: "all!",
+                    game: "any games"
+                }]);
+            else
+                await setSession(json.rows);
         }, err=> console.error(err))
         .catch(err => console.error(err)).done();
     });
@@ -48,7 +49,19 @@ const Profile=(props) => {
 
             <View style={styles.break}/>
 
-            {sessions.map(x=>
+            {sessions === undefined?
+            [{
+                key: 0,
+                first_name: "You",
+                last_name: "haven't",
+                timeslot: "all!",
+                game: "any games"
+            }].map(x=>
+                <View key={x.key} style={styles.find}>
+                    <Text>{x.first_name+" "+x.last_name+" played "+x.game+" at "+x.timeslot}</Text>
+                </View>
+            ):
+            sessions.map(x=>
                 <View key={x.key} style={styles.find}>
                     <Text>{x.first_name+" "+x.last_name+" played "+x.game+" at "+x.timeslot}</Text>
                 </View>

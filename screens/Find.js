@@ -34,7 +34,7 @@ const Find = (props) => {
 
     const sessionCreation = () => {
         return fetch('https://play-hoboken.herokuapp.com/create-session', {
-            method: 'POST',
+            method: 'PUT',
             headers: {
                 Accept: 'application/json',
                 'Content-Type': 'application/json'

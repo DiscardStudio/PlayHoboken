@@ -24,14 +24,14 @@ const Signup = (props) => {
                 first_name: fname,
                 last_name: lname
             })
-        }).then(res => {
-            res.status === 200 ?
+        })
+        .then(res => res.json())
+        .then(res => {
             props.render({
                 email: email,
                 first_name: fname,
                 last_name: lname
-            }):
-            console.error("Error signing up");
+            })
         }, err=> console.error(err)).catch(err => console.error(err));
     }
 
