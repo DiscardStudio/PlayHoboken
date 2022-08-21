@@ -6,8 +6,8 @@ const Login = (props) => {
     const [email, setEmail] = useState("");
     const [hash, setHash] = useHash();
 
-    function fetch_login() {
-        var fetching = fetch('https://play-hoboken.herokuapp.com/login', {
+    async function fetch_login() {
+        var fetching = await fetch('https://play-hoboken.herokuapp.com/login', {
             method: 'POST',
             headers: {
                 Accept: 'application/json',
@@ -18,18 +18,17 @@ const Login = (props) => {
                 passhash: hash
             })
         })
-        .then(json => {
-            console.log(json, email, hash);
-            if(json.email === undefined)
+        .then(res => res.json())
+        .then(res => {
+            if(res === undefined)
                 return console.error("Error Logging in");
             else {
-                console.log(json, email, hash);
                 props.render({
                     email: email,
-                    first_name: json.first_name,
-                    last_name: json.last_name
+                    first_name: res.first_name,
+                    last_name: res.last_name
                 });
-        }
+            }
         }, err=> console.error(err))
         .catch(err => console.error(err)).done();
     }
