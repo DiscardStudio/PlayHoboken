@@ -70,26 +70,28 @@ app.use(express.json());
 
 app.get('/', (req, res) => res.status(200));
 
-app.post('/signup', (req, res) => {
-    const result = callQuery(`select email from auth where email='${req.body.email}'`)
+app.post('/signup', async (req, res) => {
+    const result = await callQuery(`select email from auth where email='${req.body.email}'`)
     if(result.stack) {
         res.status(404);
         return console.error('Error executing query\n', err.stack);
-    }
-    if (result && result.rows && result.rows.length > 0) {
+    } else if (result && result.rows && result.rows.length > 0) {
         res.status(500);
         return console.error('User already exists');
+    } else {
+        const result2 = await callQuery(`
+        insert into auth(email,passhash)
+        values('${req.body.email}','${req.body.passhash}');
+        insert into users(email, first_name, last_name)
+        values ('${req.body.email}','${req.body.first_name}','${req.body.last_name}');`)
+        if (result2.stack) {
+            res.status(403);
+            return console.error('Error executing query', result2.stack);
+        } else {
+            res.status(200);
+            return console.log("Success");
+        }
     }
-    const result2 = callQuery(`
-    insert into auth(email,passhash)
-    values('${req.body.email}','${req.body.passhash}');
-    insert into users(email, first_name, last_name) values ('${req.body.email}','${req.body.first_name}','${req.body.last_name}');`)
-    if (result2.stack) {
-        res.status(403);
-        return console.error('Error executing query', result2.stack);
-    }
-    res.status(200);
-    return console.log("Success");
 });
 
 var transporter = Mailer.createTransport({
@@ -103,9 +105,9 @@ var transporter = Mailer.createTransport({
     },
 });
 
-app.post('/create-session', (req, res) => {
+app.post('/create-session', async (req, res) => {
     const date = new Date();
-    const result = callQuery(`
+    const result = await callQuery(`
     insert into sessions(
         email,
         first_name,
@@ -160,9 +162,9 @@ app.post('/create-session', (req, res) => {
         });*/
 });
 
-app.get('/find-session', (req, res) => {
+app.get('/find-session', async (req, res) => {
     const date = new Date();
-    const result = callQuery(`select first_name, last_name, session_time, game
+    const result = await callQuery(`select first_name, last_name, session_time, game
                 from sessions
                 where sessions.session_date = '${date.getMonth()+"/"+date.getDay()+"/"+date.getFullYear()}'
                 order by session_time
@@ -179,8 +181,8 @@ app.get('/find-session', (req, res) => {
     return console.log("Not found");
 });
 
-app.post('/my-sessions', (req, res) => {
-    const result = callQuery(`select first_name, last_name, session_time, game
+app.post('/my-sessions', async (req, res) => {
+    const result = await callQuery(`select first_name, last_name, session_time, game
                 from sessions
                 where sessions.email = '${req.body.email}'
                 order by session_time
