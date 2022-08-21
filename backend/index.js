@@ -28,7 +28,7 @@ pool.connect();
     );
     
     create table sessions (
-        email varchar(32) primary key,
+        email varchar(32) not null,
         first_name varchar(32) not null,
         last_name varchar(32) not null,
         session_date char(8) not null,

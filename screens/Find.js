@@ -33,7 +33,7 @@ const Find = (props) => {
     },[shouldQuery]);
 
     const sessionCreation = () => {
-        return fetch('https://play-hoboken.herokuapp.com/create-session', {
+        fetch('https://play-hoboken.herokuapp.com/create-session', {
             method: 'PUT',
             headers: {
                 Accept: 'application/json',
@@ -41,6 +41,8 @@ const Find = (props) => {
             },
             body: JSON.stringify({
                 email: props.login.email,
+                first_name: props.login.first_name,
+                last_name: props.login.last_name,
                 game: createSession.current
             })
         })
@@ -50,6 +52,7 @@ const Find = (props) => {
             </View>
         ]):console.error("Error creating session"))
         .catch(err => console.error(err)).done();
+        setShouldQuery(true);
     }
 
     return (

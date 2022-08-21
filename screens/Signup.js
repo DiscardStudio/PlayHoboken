@@ -6,33 +6,35 @@ const Signup = (props) => {
     const [fname, setFName] = useState("");
     const [lname, setLName] = useState("");
     const [email, setEmail] = useState("");
-    const [pass, setPass] = useState("");
-    const [confirm, setConfirm] = useState("");
-    const [hash, setHash] = useHash();
+    const [pass, setPass] = useHash("");
+    const [confirm, setConfirm] = useHash("");
 
     async function fetch_signup() {
-        await setHash(pass);
-        fetch('https://play-hoboken.herokuapp.com/signup', {
-            method: 'POST',
-            headers: {
-                Accept: 'application/json',
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                email: email,
-                passhash: hash,
-                first_name: fname,
-                last_name: lname
+        if(pass === confirm){
+            fetch('https://play-hoboken.herokuapp.com/signup', {
+                method: 'POST',
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    email: email,
+                    passhash: pass,
+                    first_name: fname,
+                    last_name: lname
+                })
             })
-        })
-        .then(res => res.json())
-        .then(res => {
-            props.render({
-                email: email,
-                first_name: fname,
-                last_name: lname
-            })
-        }, err=> console.error(err)).catch(err => console.error(err));
+            .then(res => res.status)
+            .then(res => {
+                props.render({
+                    email: email,
+                    first_name: fname,
+                    last_name: lname
+                })
+            }, err=> console.error(err)).catch(err => console.error(err));
+        }
+        else
+            console.error("Passwords Must Match");
     }
 
     useEffect(()=> {
@@ -53,11 +55,9 @@ const Signup = (props) => {
                 }} placeholder="Email"/>
             <TextInput secureTextEntry={true} style={styles.inputs} onChangeText={e=>{
                 setPass(e);
-                e===confirm? setHash(e):console.error("Passwords must match")
                 }} placeholder="Password"/>
             <TextInput secureTextEntry={true} style={styles.inputs} onChangeText={e=>{
                 setConfirm(e);
-                e===pass? setHash(e):console.error("Passwords must match")
                 }} placeholder="Confirm Password"/>
             <Button title="Submit" onPress={e=>fetch_signup()}/>
         </View>
