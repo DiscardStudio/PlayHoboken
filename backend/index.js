@@ -209,6 +209,7 @@ app.post('/login', async (req,res) => {
         return console.error('Error executing query', result.stack);
     }
     res.json(result.rows[0]);
+    return console.log(result.rows[0]);
 });
 
 app.listen(port, () => {
