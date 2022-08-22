@@ -200,7 +200,7 @@ app.put('/create-session', async (req, res) => {
 
 app.get('/find-session', async (req, res) => {
     const date = new Date();
-    var today = date.getMonth()+"/"+date.getDay()+"/"+date.getFullYear()
+    var today = date.getMonth()+"/"+date.getDay()+"/"+date.getFullYear();
     const result = await callQuery(`
                 select email, first_name, last_name, session_time. game
                 from sessions
