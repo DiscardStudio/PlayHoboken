@@ -88,7 +88,11 @@ app.post('/signup', async (req, res) => {
             await res.status(403);
             return console.error('Error executing query', result2.stack);
         } else {
-            await res.status(200);
+            await res.json({
+                email: req.body.email,
+                first_name: req.body.first_name,
+                last_name: req.body.last_name
+            });
             return console.log("Success");
         }
     }

@@ -24,13 +24,9 @@ const Signup = (props) => {
                     last_name: lname
                 })
             })
-            .then(res => res.status)
-            .then(res => {
-                props.render({
-                    email: email,
-                    first_name: fname,
-                    last_name: lname
-                })
+            .then(res => res.json())
+            .then(() => {
+                props.render(res);
             }, err=> console.error(err)).catch(err => console.error(err));
         }
         else
