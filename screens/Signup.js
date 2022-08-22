@@ -18,7 +18,7 @@ const Signup = (props) => {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    email: email,
+                    email: email.toLowerCase(),
                     passhash: pass,
                     first_name: fname,
                     last_name: lname
@@ -28,7 +28,7 @@ const Signup = (props) => {
             .catch(err => console.error(err)).done();
             if(f === 200)
                 props.render({
-                    email: email,
+                    email: email.toLowerCase(),
                     first_name: fname,
                     last_name: lname
                 })

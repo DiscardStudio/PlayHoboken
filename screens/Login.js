@@ -14,7 +14,7 @@ const Login = (props) => {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                email: email,
+                email: email.toLowerCase(),
                 passhash: hash
             })
         })
@@ -24,7 +24,7 @@ const Login = (props) => {
                 return console.error("Error Logging in");
             else {
                 props.render({
-                    email: email,
+                    email: email.toLowerCase(),
                     first_name: res.first_name,
                     last_name: res.last_name
                 });
