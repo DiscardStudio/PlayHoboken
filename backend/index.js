@@ -144,6 +144,15 @@ var transporter = Mailer.createTransport({
         });*/
 app.put('/create-session', async (req, res) => {
     const date = new Date();
+    var time = '';
+    if(date.getHours() > 12)
+        time += date.getHours() - 12;
+    else
+        time += date.getHours();
+    
+    if(date.getMinutes() < 10)
+        time += 0;
+    time+=date.getMinutes();
     const result = await callQuery(`
     insert into sessions(
         email,
@@ -157,7 +166,7 @@ app.put('/create-session', async (req, res) => {
         '${req.body.first_name}',
         '${req.body.last_name}',
         '${date.getMonth()+"/"+date.getDay()+"/"+date.getFullYear()}',
-        '${date.getHours()%12+":"+date.getMinutes()}',
+        '${time}',
         '${req.body.game}')`);
         if (result && result.rows && result.rows.length > 0) {
             await res.status(403);
