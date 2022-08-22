@@ -210,7 +210,7 @@ app.get('/find-session', async (req, res) => {
         await res.status(403);
         return console.error('Error finding sessions');
     } else if (result.rows.length > 0) {
-        await res.send(result.rows);
+        await res.sjsonend({rows: result.rows});
         return console.log('Sent Sessions');
     } else {
         await res.json({rows: "Nobodys here. Be the first player of the day!"})

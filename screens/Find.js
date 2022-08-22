@@ -13,10 +13,14 @@ const Find = (props) => {
 
     useEffect(() => {
         setShouldQuery(false);
-        return fetch('https://play-hoboken.herokuapp.com/find-session')
-        .then(res => {
-            return {status: res.status, rows: res.json().rows
-        }})
+        return fetch('https://play-hoboken.herokuapp.com/find-session',{
+            method: 'GET',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(res => res.json())
         .then(data => 
             data.rows === undefined ?
             setSession([
@@ -56,7 +60,9 @@ const Find = (props) => {
     }
 
     return (
-        <ScrollView style={styles.container}>
+        <ScrollView
+        style={styles.container}
+        contentContainerStyle={styles.contentContainer}>
             <Text style={styles.header1}>Who's Playing?</Text>
             {sessions}
             <View style={styles.break}/>
@@ -75,6 +81,8 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#fff',
+    },
+    contentContainer: {
         alignItems: 'center',
     },
     header1: {
