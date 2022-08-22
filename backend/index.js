@@ -33,7 +33,8 @@ pool.connect();
         last_name varchar(32) not null,
         session_date char(8) not null,
         session_time char(5) not null,
-        game varchar(16) not null
+        game varchar(16) not null,
+        active boolean not null
     );
     
     create table interests (
@@ -160,14 +161,16 @@ app.put('/create-session', async (req, res) => {
         last_name,
         session_date,
         session_time,
-        game)
+        game,
+        active)
     values (
         '${req.body.email}',
         '${req.body.first_name}',
         '${req.body.last_name}',
         '${date.getMonth()+"/"+date.getDay()+"/"+date.getFullYear()}',
         '${time}',
-        '${req.body.game}')`);
+        '${req.body.game}'),
+        'true'`);
         if (result && result.rows && result.rows.length > 0) {
             await res.status(403);
             return console.error('Session already exists');
@@ -200,7 +203,7 @@ app.get('/find-session', async (req, res) => {
     const date = new Date();
     const result = await callQuery(`select first_name, last_name, session_time, game
                 from sessions
-                where sessions.session_date = '${date.getMonth()+"/"+date.getDay()+"/"+date.getFullYear()}'
+                where sessions.session_date = '${date.getMonth()+"/"+date.getDay()+"/"+date.getFullYear()}' && sessions.active = 'true'
                 order by session_time
                 `)
     if (result.stack) {

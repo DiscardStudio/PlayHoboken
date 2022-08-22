@@ -26,6 +26,7 @@ const Signup = (props) => {
             })
             .then(res => res.status)
             .catch(err => console.error(err)).done();
+            props.toggle(0);
             if(f === 200)
                 props.render({
                     email: email.toLowerCase(),
@@ -36,11 +37,6 @@ const Signup = (props) => {
         else
             console.error("Passwords Must Match");
     }
-
-    useEffect(()=> {
-        if(pass !== confirm)
-            console.error("Passwords must match");
-    });
 
     return (
         <View>

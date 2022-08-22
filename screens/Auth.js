@@ -29,7 +29,7 @@ export default Auth = (props) => {
     return (
         page < 2?
         <View style={styles.container}>
-            {page === 0 ? <Login login={user} render={render}/>:<Signup login={user} render={render}/>}
+            {page === 0 ? <Login login={user} render={render}/>:<Signup login={user} render={render} toggle={toggle}/>}
             <Button style={{position: 'relative',margin: 5}}title={page===0? "Not a Player? Join Today!":"Already a Player? Sign in!"} onPress={()=>page===0?toggle(1):toggle(0)}/>
         </View>:
         <Play login={user} render={logout}/>

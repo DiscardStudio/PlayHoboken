@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { StyleSheet, Text, View, Button } from "react-native";
+import { StyleSheet, Text, ScrollView, View, Button } from "react-native";
 import DropdownComponent from "../components/DropdownComponent";
 
 const Find = (props) => {
@@ -56,7 +56,7 @@ const Find = (props) => {
     }
 
     return (
-        <View style={styles.container}>
+        <ScrollView style={styles.container}>
             <Text style={styles.header1}>Who's Playing?</Text>
             {sessions}
             <View style={styles.break}/>
@@ -67,7 +67,7 @@ const Find = (props) => {
             <Button title="Make Session" onPress={e => {
                 sessionCreation();
             }} />
-        </View>
+        </ScrollView>
     );
 }
 
