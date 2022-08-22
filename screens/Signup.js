@@ -11,7 +11,7 @@ const Signup = (props) => {
 
     async function fetch_signup() {
         if(pass === confirm){
-            fetch('https://play-hoboken.herokuapp.com/signup', {
+            var f = await fetch('https://play-hoboken.herokuapp.com/signup', {
                 method: 'POST',
                 headers: {
                     Accept: 'application/json',
@@ -24,10 +24,14 @@ const Signup = (props) => {
                     last_name: lname
                 })
             })
-            .then(res => res.json())
-            .then(() => {
-                props.render(res);
-            }, err=> console.error(err)).catch(err => console.error(err));
+            .then(res => res.status)
+            .catch(err => console.error(err)).done();
+            if(f === 200)
+                props.render({
+                    email: email,
+                    first_name: fname,
+                    last_name: lname
+                })
         }
         else
             console.error("Passwords Must Match");

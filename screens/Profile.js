@@ -23,7 +23,7 @@ const Profile=(props) => {
                 email: props.login.email
             })
         })
-        .then(json => json.json)
+        .then(json => json.json())
         .then(async json => {
             if(json.rows !== undefined)
                 await setSession([{

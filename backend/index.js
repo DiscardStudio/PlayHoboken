@@ -33,7 +33,7 @@ pool.connect();
         last_name varchar(32) not null,
         session_date char(8) not null,
         session_time char(5) not null,
-        game varchar(4) not null
+        game varchar(16) not null
     );
     
     create table interests (

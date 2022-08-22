@@ -32,8 +32,8 @@ const Find = (props) => {
         .catch(err => console.error(err)).done();            
     },[shouldQuery]);
 
-    const sessionCreation = () => {
-        fetch('https://play-hoboken.herokuapp.com/create-session', {
+    const sessionCreation = async () => {
+        await fetch('https://play-hoboken.herokuapp.com/create-session', {
             method: 'PUT',
             headers: {
                 Accept: 'application/json',
