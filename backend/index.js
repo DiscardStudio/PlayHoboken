@@ -150,7 +150,7 @@ app.put('/create-session', async (req, res) => {
         time += date.getHours() - 12;
     else
         time += date.getHours();
-    
+    time+=":"
     if(date.getMinutes() < 10)
         time += 0;
     time+=date.getMinutes();
