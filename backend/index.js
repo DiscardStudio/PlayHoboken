@@ -83,7 +83,9 @@ app.post('/signup', async (req, res) => {
         insert into auth(email,passhash)
         values('${req.body.email}','${req.body.passhash}');
         insert into users(email, first_name, last_name)
-        values ('${req.body.email}','${req.body.first_name}','${req.body.last_name}');`)
+        values ('${req.body.email}','${req.body.first_name}','${req.body.last_name}');
+        insert into interests(email, interests)
+        values ('${req.body.email}','{}');`)
         if (result2.stack) {
             await res.status(403);
             return console.error('Error executing query', result2.stack);
@@ -205,7 +207,7 @@ app.get('/find-session', async (req, res) => {
                 select email, first_name, last_name, session_time, game
                 from sessions
                 where sessions.session_date='${today}' and sessions.active=TRUE
-                order by session_time
+                order by session_time desc
                 `)
     if (result.stack) {
         await res.status(403);
@@ -223,7 +225,7 @@ app.post('/my-sessions', async (req, res) => {
     const result = await callQuery(`select first_name, last_name, session_time, game
                 from sessions
                 where sessions.email = '${req.body.email}'
-                order by session_time
+                order by session_time desc
                 `);
     if (result.stack) {
         await res.status(403);
