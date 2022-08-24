@@ -31,8 +31,8 @@ pool.connect();
         email varchar(32) not null,
         first_name varchar(32) not null,
         last_name varchar(32) not null,
-        session_date char(8) not null,
-        session_time char(5) not null,
+        session_date varchar(10) not null,
+        session_time varchar(5) not null,
         game varchar(16) not null,
         active boolean not null
     );
@@ -168,7 +168,7 @@ app.put('/create-session', async (req, res) => {
         '${req.body.last_name}',
         '${date.getMonth()+"/"+date.getDay()+"/"+date.getFullYear()}',
         '${time}',
-        '${req.body.game}'),
+        '${req.body.game}',
         TRUE);`);
         if (result && result.rows && result.rows.length > 0) {
             await res.status(403);

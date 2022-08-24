@@ -63,7 +63,7 @@ const Profile=(props) => {
             ):
             sessions.map(x=>
                 <View key={x.key} style={styles.find}>
-                    <Text>{x.first_name+" "+x.last_name+" played "+x.game+" at "+x.timeslot}</Text>
+                    <Text>{x.first_name+" "+x.last_name+" played "+(labels.filter(x => x.value === x.game)[0].label)+" at "+x.timeslot}</Text>
                 </View>
             )}
         </View>

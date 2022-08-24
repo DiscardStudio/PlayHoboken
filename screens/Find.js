@@ -2,6 +2,20 @@ import { useEffect, useRef, useState } from "react";
 import { StyleSheet, Text, ScrollView, View, Button } from "react-native";
 import DropdownComponent from "../components/DropdownComponent";
 
+const labels = [
+    { label: 'Dungeons & Dragons', value: 'DnD' },
+    { label: 'Board Games', value: 'BG' },
+    { label: 'Billiards', value: 'P' },
+    { label: 'Magic the Gathering', value: 'MtG' },
+    { label: 'Flesh \'N Blood', value: 'FnB' },
+    { label: 'Chess', value: 'Chess' },
+    { label: 'Golf', value: 'G' },
+    { label: 'E-Sports', value: 'E' },
+    { label: 'Darts', value: 'D' },
+    { label: 'Foosball', value: 'F' },
+    
+  ]
+
 const Find = (props) => {
     const createSession = useRef("");
     const [shouldQuery, setShouldQuery] = useState(true);
@@ -31,7 +45,7 @@ const Find = (props) => {
             else
                 setSession(data.rows.map(x=>
                     <View key={x.session_time} style={styles.find}>
-                        <Text>{x.first_name+" "+x.last_name+" started playing "+x.game+" at "+x.session_time}</Text>
+                        <Text>{x.first_name+" "+x.last_name+" started playing "+(labels.filter(x => x.value === x.game)[0].label)+" at "+x.session_time}</Text>
                     </View>
                 ));
         })
