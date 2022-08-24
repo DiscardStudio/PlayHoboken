@@ -14,7 +14,7 @@ const labels = [
     { label: 'Darts', value: 'D' },
     { label: 'Foosball', value: 'F' },
     
-  ]
+  ];
 
 const Find = (props) => {
     const createSession = useRef("");
@@ -43,11 +43,13 @@ const Find = (props) => {
                     </View>
                 ]);
             else
-                setSession(data.rows.map(x=>
+                setSession(data.rows.map(x=>{
+                    labels.map(y => console.log(y.value));
+                    return (
                     <View key={x.session_time} style={styles.find}>
-                        <Text>{x.first_name+" "+x.last_name+" started playing "+(labels.filter(y => y.value === x.game)[0].label)+" at "+x.session_time}</Text>
+                        <Text>{x.first_name+" "+x.last_name+" started playing"+(labels.reduce(y => y.value === x.game ? ` ${y.label} ` : " "))+"at "+x.session_time}</Text>
                     </View>
-                ));
+                );}));
         })
         .catch(err => console.error(err)).done();            
     },[shouldQuery]);

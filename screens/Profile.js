@@ -1,8 +1,20 @@
 import { useState, useLayoutEffect } from "react";
 import { StyleSheet, Text, View, Button } from "react-native";
-/**
- * TODO: Add ability to add to interests table. May be more efficient to do so by use of the Create-Session backend
- */
+
+const labels = [
+    { label: 'Dungeons & Dragons', value: 'DnD' },
+    { label: 'Board Games', value: 'BG' },
+    { label: 'Billiards', value: 'P' },
+    { label: 'Magic the Gathering', value: 'MtG' },
+    { label: 'Flesh \'N Blood', value: 'FnB' },
+    { label: 'Chess', value: 'Chess' },
+    { label: 'Golf', value: 'G' },
+    { label: 'E-Sports', value: 'E' },
+    { label: 'Darts', value: 'D' },
+    { label: 'Foosball', value: 'F' },
+    
+  ];
+
 const Profile=(props) => {
     const [sessions, setSession] = useState([{
         key: 0,
@@ -50,20 +62,13 @@ const Profile=(props) => {
             <View style={styles.break}/>
 
             {sessions === undefined?
-            [{
-                key: 0,
-                first_name: "You",
-                last_name: "haven't",
-                timeslot: "all!",
-                game: "any games"
-            }].map(x=>
-                <View key={x.key} style={styles.find}>
-                    <Text>{x.first_name+" "+x.last_name+" played "+x.game+" at "+x.timeslot}</Text>
+                <View key={0} style={styles.find}>
+                    <Text>You haven't played at all!</Text>
                 </View>
-            ):
+            :
             sessions.map(x=>
                 <View key={x.key} style={styles.find}>
-                    <Text>{x.first_name+" "+x.last_name+" played "+(labels.filter(x => x.value === x.game)[0].label)+" at "+x.timeslot}</Text>
+                    <Text>{x.first_name+" "+x.last_name+" played"+(labels.reduce(y => y.value === x.game ? ` ${y.label} ` : " "))+"at "+x.timeslot}</Text>
                 </View>
             )}
         </View>
