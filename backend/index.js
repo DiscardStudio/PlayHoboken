@@ -231,11 +231,11 @@ app.post('/my-sessions', async (req, res) => {
     if (result.stack) {
         await res.status(403);
         return console.error('Error finding sessions');
-    } else if (result.rows !== undefined && result.rows > 0) {
-        await res.json(result.rows);
+    } else if (result.rows.length > 0) {
+        await res.json({rows: result.rows});
         return console.log('Sent Sessions');
-    } else{
-        await res.status(404);
+    } else {
+        await res.json({});
         return console.log("Not found");
     }
 });
