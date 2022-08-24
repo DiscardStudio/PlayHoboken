@@ -204,7 +204,7 @@ app.get('/find-session', async (req, res) => {
     const result = await callQuery(`
                 select email, first_name, last_name, session_time, game
                 from sessions
-                where sessions.session_date='${today}' and sessions.active='true'
+                where sessions.session_date='${today}' and sessions.active=TRUE
                 order by session_time
                 `)
     if (result.stack) {
