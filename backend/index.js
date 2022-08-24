@@ -146,6 +146,7 @@ var transporter = Mailer.createTransport({
         });*/
 app.put('/create-session', async (req, res) => {
     const date = new Date();
+    var today = date.getMonth()+"/"+date.getDay()+"/"+date.getFullYear();
     var time = '';
     if(date.getHours() > 12)
         time += date.getHours() - 12;
@@ -168,7 +169,7 @@ app.put('/create-session', async (req, res) => {
         '${req.body.email}',
         '${req.body.first_name}',
         '${req.body.last_name}',
-        '${date.getMonth()+"/"+date.getDay()+"/"+date.getFullYear()}',
+        '${today}',
         '${time}',
         '${req.body.game}',
         TRUE);`);
@@ -192,7 +193,7 @@ app.put('/create-session', async (req, res) => {
                 if(!interestExists)
                     await callQuery(`
                         update interests
-                        set games = {${req.body.passhash},${checkInterest.rows.games.map(x=> `, {${x}}`)}}
+                        set games = '{${req.body.passhash} ${checkInterest.rows.games.map(x=> `, {${x}}`)}}'
                         where email = '${req.body.email}';
                     `);
             }
