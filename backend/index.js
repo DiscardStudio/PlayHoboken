@@ -169,7 +169,7 @@ app.put('/create-session', async (req, res) => {
         '${date.getMonth()+"/"+date.getDay()+"/"+date.getFullYear()}',
         '${time}',
         '${req.body.game}'),
-        'true'`);
+        TRUE`);
         if (result && result.rows && result.rows.length > 0) {
             await res.status(403);
             return console.error('Session already exists');
