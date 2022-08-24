@@ -214,7 +214,7 @@ app.get('/find-session', async (req, res) => {
         await res.json({rows: result.rows});
         return console.log('Sent Sessions');
     } else {
-        await res.json({rows: "Nobodys here. Be the first player of the day!"})
+        await res.json({});
         return console.log("Not found");
     }
 });
