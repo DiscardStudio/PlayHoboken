@@ -45,7 +45,7 @@ const Find = (props) => {
             else
                 setSession(data.rows.map(x=>
                     <View key={x.session_time} style={styles.find}>
-                        <Text>{x.first_name+" "+x.last_name+" started playing "+(labels.filter(x => x.value === x.game)[0].label)+" at "+x.session_time}</Text>
+                        <Text>{x.first_name+" "+x.last_name+" started playing "+(labels.filter(y => y.value === x.game)[0].label)+" at "+x.session_time}</Text>
                     </View>
                 ));
         })
