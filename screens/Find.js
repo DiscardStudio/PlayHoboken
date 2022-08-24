@@ -21,18 +21,20 @@ const Find = (props) => {
             }
         })
         .then(res => res.json())
-        .then(data => 
-            data.rows === undefined ?
-            setSession([
-                <View key={0} style={styles.find}>
-                    <Text>Nobodys here. Be the first player of the day!</Text>
-                </View>
-            ]):
-            setSession(data.rows.map(x=>
-                <View key={x.session_time} style={styles.find}>
-                    <Text>{x.first_name+" "+x.last_name+" started playing "+x.game+" at "+x.session_time}</Text>
-                </View>
-            )))
+        .then(data => {
+            if(data === undefined || data.rows === undefined)
+                setSession([
+                    <View key={0} style={styles.find}>
+                        <Text>Nobodys here. Be the first player of the day!</Text>
+                    </View>
+                ]);
+            else
+                setSession(data.rows.map(x=>
+                    <View key={x.session_time} style={styles.find}>
+                        <Text>{x.first_name+" "+x.last_name+" started playing "+x.game+" at "+x.session_time}</Text>
+                    </View>
+                ));
+        })
         .catch(err => console.error(err)).done();            
     },[shouldQuery]);
 
@@ -64,7 +66,7 @@ const Find = (props) => {
         style={styles.container}
         contentContainerStyle={styles.contentContainer}>
             <Text style={styles.header1}>Who's Playing?</Text>
-            {sessions}
+            {sessions.map(x=>x)}
             <View style={styles.break}/>
             <Text style={styles.header2}>Nobody Playing Your Game?</Text>
             <Text style={styles.header3}>Start Your Own Session!</Text>
