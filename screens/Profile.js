@@ -16,7 +16,7 @@ labels.set('any games', 'any games');
 
 const Profile=(props) => {
     const [initialMount, setMounted] = useState(false);
-    const [games, setGames] = useState([]);
+    const [games, setGames] = useState(["BG"]);
     const [sessions, setSession] = useState([{
         key: 0,
         first_name: "You",
@@ -26,45 +26,48 @@ const Profile=(props) => {
     }]);
 
     useLayoutEffect(() => {
-        fetch('https://play-hoboken.herokuapp.com/my-sessions', {
-            method: 'POST',
-            headers: {
-                Accept: 'application/json',
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                email: props.login.email
+        async function dataFetch() {
+            await fetch('https://play-hoboken.herokuapp.com/my-sessions', {
+                method: 'POST',
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    email: props.login.email
+                })
             })
-        })
-        .then(json => json.json())
-        .then(async json => {
-            if(json.rows === undefined)
-                await setSession([{
-                    key: 0,
-                    first_name: "You",
-                    last_name: "haven't",
-                    session_time: "all!",
-                    game: "any games"
-                }]);
-            else
-                await setSession(json.rows);
-        }, err=> console.error(err))
-        .catch(err => console.error(err)).done();
+            .then(json => json.json())
+            .then(async json => {
+                if(json.rows === undefined)
+                    await setSession([{
+                        key: 0,
+                        first_name: "You",
+                        last_name: "haven't",
+                        session_time: "all!",
+                        game: "any games"
+                    }]);
+                else
+                    await setSession(json.rows);
+            }, err=> console.error(err))
+            .catch(err => console.error(err)).done();
 
-        fetch('https://play-hoboken.herokuapp.com/get-interests', {
-            method: 'POST',
-            headers: {
-                Accept: 'application/json',
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                email: props.login.email
+            await fetch('https://play-hoboken.herokuapp.com/get-interests', {
+                method: 'POST',
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    email: props.login.email
+                })
             })
-        })
-        .then(data => data.json())
-        .then(data => setGames(data.interests), err=> console.error(err))
-        .catch(err => console.error(err)).done();
-    },[initialMount]);
+            .then(data => data.json())
+            .then(data => data.interests === undefined? ["None"]: setGames(data.interests), err=> console.error(err))
+            .catch(err => console.error(err)).done();
+        }
+        dataFetch();
+    },[initialMount, games]);
 
     const removeSession = async (game, time) => {
         await fetch('https://play-hoboken.herokuapp.com/deactivate-session', {
@@ -87,10 +90,18 @@ const Profile=(props) => {
     return (
         <View style={styles.container}>
             <Text style={styles.header1}>Hello {props.login.first_name}</Text>
+            <Button title="Log out" onPress={e => props.render()}/>
+            
+            <Text style={styles.header2}>Your Interests:</Text>
+            {games.map(x => {
+                <View key={x} style={styles.find}>
+                    <Text>{labels.get(x)}</Text>
+                <View/>
+            </View>
+            })}
             <Text style={styles.header2}>You've Played:</Text>
             
             <Text/>
-            <Button title="Log out" onPress={e => props.render()}/>
 
             <View style={styles.break}/>
 

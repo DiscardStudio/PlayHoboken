@@ -203,7 +203,7 @@ app.post('/get-interests', async (req, res) => {
         return console.err(checkInterest.stack);
     } else {
         await res.json({interests: checkInterest.rows[0].games});
-        return console.log("Sent Interests for User" + req.body.email);
+        return console.log("Sent Interests for User " + req.body.email);
     }
 });
 
