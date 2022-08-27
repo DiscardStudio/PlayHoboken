@@ -111,36 +111,6 @@ var transporter = Mailer.createTransport({
     },
 });
 
-/*  notification template via email for /create-session
-        pool.query(`
-            select users.email, users.first_name
-            from users, interests
-            where users.email=interests.email and '${req.body.game}'=any(interests.games)`, 
-            (err, result2) => {
-            if (err) {
-                res.status(403);
-                return console.error(err.stack);
-            } else{
-                for(var x=0;x<result2.rows.length; x++) {
-                    var mailOptions = {
-                        from: 'noreply@playhoboken.com',
-                        to: result.rows[x].email,
-                        subject: `${req.body.first_name} is playing one of your favorite games!`,
-                        text: `Dear ${result2.rows[x].first_name},\n Come by today right now to play your favorite game with ${req.body.first_name}!\n\n Note: This is an automated message, please direct any questions you have to https://playhoboken.com`
-                    };
-                    transporter.sendMail(mailOptions, function(error, info){
-                        if (error) {
-                            console.log(error);
-                            res.status(500);
-                        } else {
-                            console.log('Email sent: ' + info.response);
-                            res.status(200);
-                        }
-                    });
-                }
-                return console.log("Success");
-            }
-        });*/
 app.put('/create-session', async (req, res) => {
     const date = new Date();
     var today = date.getMonth()+"/"+date.getDay()+"/"+date.getFullYear();
@@ -170,32 +140,59 @@ app.put('/create-session', async (req, res) => {
         '${time}',
         '${req.body.game}',
         TRUE);`);
-        if (result && result.rows) {
-            await res.status(403);
-            return console.error('Session already exists');
-        } else {
-            const checkInterest = await callQuery(`
-                select games
-                from interests
-                where interests.email='${req.body.email}';
-            `);
-            if(checkInterest.rows !== undefined){
-                var interestExists=false;
-                for(var x=0;x<checkInterest.rows.games.length; x++) {
-                    if(checkInterest.rows.games[x] === req.body.game){
-                        interestExists=true;
-                        break;
-                    }
+    if (result && result.rows) {
+        await res.status(403);
+        return console.error('Session already exists');
+    } else {
+        const checkInterest = await callQuery(`
+            select games
+            from interests
+            where interests.email='${req.body.email}';
+        `);
+        if(checkInterest.rows !== undefined){
+            var interestExists=false;
+            for(var x=0;x<checkInterest.rows.games.length; x++) {
+                if(checkInterest.rows.games[x] === req.body.game){
+                    interestExists=true;
+                    break;
                 }
-                if(!interestExists)
-                    await callQuery(`
-                        update interests
-                        set games = '{${req.body.passhash} ${checkInterest.rows.games.map(x=> `, {${x}}`)}}'
-                        where email = '${req.body.email}';
-                    `);
             }
-            await res.status(200);
+            if(!interestExists) {
+                await callQuery(`
+                    update interests
+                    set games = '{${req.body.passhash} ${checkInterest.rows.games.map(x=> `, {${x}}`)}}'
+                    where email = '${req.body.email}';
+                `);
+            }
         }
+        const result2 = await callQuery(`
+        select users.email, users.first_name
+        from users, interests
+        where users.email=interests.email and '${req.body.game}'=any(interests.games);`);
+        if (result2.stack) {
+            res.status(403);
+            return console.error(result2.stack);
+        } else{
+            for(var x=0;x<result2.rows.length; x++) {
+                var mailOptions = {
+                    from: 'noreply@playhoboken.com',
+                    to: result.rows[x].email,
+                    subject: `${req.body.first_name} is playing one of your favorite games!`,
+                    text: `Dear ${result2.rows[x].first_name},\n Come by today right now to play your favorite game with ${req.body.first_name}!\n\n Note: This is an automated message, please direct any questions you have to https://playhoboken.com`
+                };
+                transporter.sendMail(mailOptions, function(error, info){
+                    if (error) {
+                        console.log(error);
+                        res.status(500);
+                    } else {
+                        console.log('Email sent: ' + info.response);
+                        res.status(200);
+                    }
+                });
+            }
+            return console.log("Success");
+        }
+    }
 });
 
 app.get('/find-session', async (req, res) => {
