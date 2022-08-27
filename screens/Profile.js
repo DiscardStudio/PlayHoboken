@@ -16,11 +16,12 @@ const labels = [
   ];
 
 const Profile=(props) => {
+    const [initialMount, setMounted] = useState(false);
     const [sessions, setSession] = useState([{
         key: 0,
         first_name: "You",
         last_name: "haven't",
-        timeslot: "all!",
+        session_time: "all!",
         game: "any games"
     }]);
 
@@ -37,19 +38,19 @@ const Profile=(props) => {
         })
         .then(json => json.json())
         .then(async json => {
-            if(json.rows !== undefined)
+            if(json.rows === undefined)
                 await setSession([{
                     key: 0,
                     first_name: "You",
                     last_name: "haven't",
-                    timeslot: "all!",
+                    session_time: "all!",
                     game: "any games"
                 }]);
             else
                 await setSession(json.rows);
         }, err=> console.error(err))
         .catch(err => console.error(err)).done();
-    });
+    },[initialMount]);
 
     return (
         <View style={styles.container}>
@@ -67,8 +68,8 @@ const Profile=(props) => {
                 </View>
             :
             sessions.map(x=>
-                <View key={x.key} style={styles.find}>
-                    <Text>{x.first_name+" "+x.last_name+" played"+(labels.reduce(y => y.value === x.game ? ` ${y.label} ` : " "))+"at "+x.timeslot}</Text>
+                <View key={x.session_time} style={styles.find}>
+                    <Text>{x.first_name+" "+x.last_name+" played"+(labels.reduce(y => y.value === x.game ? ` ${y.label} ` : " "))+"at "+x.session_time}</Text>
                 </View>
             )}
         </View>

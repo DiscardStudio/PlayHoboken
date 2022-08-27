@@ -120,10 +120,7 @@ var transporter = Mailer.createTransport({
             if (err) {
                 res.status(403);
                 return console.error(err.stack);
-            }
-            else{
-                res.status(200);
-                
+            } else{
                 for(var x=0;x<result2.rows.length; x++) {
                     var mailOptions = {
                         from: 'noreply@playhoboken.com',
@@ -148,10 +145,10 @@ app.put('/create-session', async (req, res) => {
     const date = new Date();
     var today = date.getMonth()+"/"+date.getDay()+"/"+date.getFullYear();
     var time = '';
-    if(date.getHours() > 12)
-        time += date.getHours() - 12;
+    if(date.getHours() > 16)
+        time += date.getHours() - 16;
     else
-        time += date.getHours();
+        time += date.getHours() - 4;
     time+=":"
     if(date.getMinutes() < 10)
         time += 0;

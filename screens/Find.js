@@ -44,7 +44,6 @@ const Find = (props) => {
                 ]);
             else
                 setSession(data.rows.map(x=>{
-                    labels.map(y => console.log(y.value));
                     return (
                     <View key={x.session_time} style={styles.find}>
                         <Text>{x.first_name+" "+x.last_name+" started playing"+(labels.reduce(y => y.value === x.game ? ` ${y.label} ` : " "))+"at "+x.session_time}</Text>
@@ -74,7 +73,7 @@ const Find = (props) => {
             </View>
         ]):console.error("Error creating session"))
         .catch(err => console.error(err)).done();
-        setShouldQuery(true);
+        setShouldQuery(true); //To take advantage of React rendering upon state updates
     }
 
     return (
