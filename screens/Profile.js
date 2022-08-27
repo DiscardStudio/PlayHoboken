@@ -16,6 +16,7 @@ labels.set('any games', 'any games');
 
 const Profile=(props) => {
     const [initialMount, setMounted] = useState(false);
+    const [games, setGames] = useState([]);
     const [sessions, setSession] = useState([{
         key: 0,
         first_name: "You",
@@ -48,6 +49,20 @@ const Profile=(props) => {
             else
                 await setSession(json.rows);
         }, err=> console.error(err))
+        .catch(err => console.error(err)).done();
+
+        fetch('https://play-hoboken.herokuapp.com/get-interests', {
+            method: 'POST',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                email: props.login.email
+            })
+        })
+        .then(data => data.json())
+        .then(data => setGames(data.interests), err=> console.error(err))
         .catch(err => console.error(err)).done();
     },[initialMount]);
 

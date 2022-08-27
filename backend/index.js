@@ -144,27 +144,7 @@ app.put('/create-session', async (req, res) => {
         await res.status(403);
         return console.error('Session already exists');
     } else {
-        const checkInterest = await callQuery(`
-            select games
-            from interests
-            where interests.email='${req.body.email}';
-        `);
-        if(checkInterest.rows !== undefined){
-            var interestExists=false;
-            for(var x=0;x<checkInterest.rows.games.length; x++) {
-                if(checkInterest.rows.games[x] === req.body.game){
-                    interestExists=true;
-                    break;
-                }
-            }
-            if(!interestExists) {
-                await callQuery(`
-                    update interests
-                    set games = '{${req.body.passhash} ${checkInterest.rows.games.map(x=> `, {${x}}`)}}'
-                    where email = '${req.body.email}';
-                `);
-            }
-        }
+        //Notifications
         const result2 = await callQuery(`
         select users.email, users.first_name
         from users, interests
@@ -192,6 +172,38 @@ app.put('/create-session', async (req, res) => {
             }
             return console.log("Success");
         }
+    }
+});
+
+app.put('/set-interests', async (req, res) => {
+    const checkInterest = await callQuery(`
+        update interests
+        set games = '{${req.games}}'
+        where email = '${req.body.email}';
+    `);
+
+    if(checkInterest.stack) {
+        await res.status(500);
+        return console.error(checkInterest.stack);
+    } else {
+        await res.status(200);
+        return console.log("Set Interests for User " + req.body.email);
+    }
+});
+
+app.post('/get-interests', async (req, res) => {
+    const checkInterest = await callQuery(`
+        select games
+        from interests
+        where email = '${req.body.email}';
+    `);
+
+    if(checkInterest.stack) {
+        await res.status(500);
+        return console.err(checkInterest.stack);
+    } else {
+        await res.json({interests: checkInterest.rows[0].games});
+        return console.log("Sent Interests for User" + req.body.email);
     }
 });
 
