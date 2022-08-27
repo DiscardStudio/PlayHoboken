@@ -2,19 +2,17 @@ import { useEffect, useState } from "react";
 import { StyleSheet, Text, ScrollView, View, Button } from "react-native";
 import DropdownComponent from "../components/DropdownComponent";
 
-const labels = [
-    { label: 'Dungeons & Dragons', value: 'DnD' },
-    { label: 'Board Games', value: 'BG' },
-    { label: 'Billiards', value: 'P' },
-    { label: 'Magic the Gathering', value: 'MtG' },
-    { label: 'Flesh \'N Blood', value: 'FnB' },
-    { label: 'Chess', value: 'Chess' },
-    { label: 'Golf', value: 'G' },
-    { label: 'E-Sports', value: 'E' },
-    { label: 'Darts', value: 'D' },
-    { label: 'Foosball', value: 'F' },
-    
-  ];
+const labels = new Map();
+labels.set('DnD', 'Dungeons & Dragons');
+labels.set('BG', 'Board Games');
+labels.set('P', 'Billiards');
+labels.set('MtG', 'Magic the Gathering');
+labels.set('FnB', 'Flesh \'N Blood');
+labels.set('Chess', 'Chess');
+labels.set('G', 'Golf');
+labels.set('E', 'E-Sports');
+labels.set('D', 'Darts');
+labels.set('F', 'Foosball');
 
 const Find = (props) => {
     const [shouldQuery, setShouldQuery] = useState(true);
@@ -47,10 +45,10 @@ const Find = (props) => {
                     return (
                     <View key={x.session_time+x.game} style={styles.find}>
                         <Text>{
-                            x.first_name+" "+x.last_name+
-                            " started playing"+
-                            (labels.reduce(y => y.value === x.game ? ` ${y.label} ` : " "))+//Does not trigger correctly
-                            "at "+x.session_time
+                            x.first_name+" "+x.last_name.charAt(0)+
+                            " started "+
+                            (labels.get(x.game))+
+                            " at "+x.session_time
                         }</Text>
                     </View>
                 );}));

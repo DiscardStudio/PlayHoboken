@@ -221,7 +221,7 @@ app.get('/find-session', async (req, res) => {
 
 app.post('/my-sessions', async (req, res) => {
     const result = await callQuery(`
-                select first_name, last_name, session_time, game
+                select first_name, last_name, session_time, game, active
                 from sessions
                 where sessions.email = '${req.body.email}'
                 order by session_time desc
@@ -230,11 +230,26 @@ app.post('/my-sessions', async (req, res) => {
         await res.status(403);
         return console.error('Error finding sessions');
     } else if (result.rows.length > 0) {
-        await result.rows.map(x=>console.table(x));
         await res.json({rows: result.rows});
         return console.log('Sent Sessions');
     } else {
         await res.json({});
+        return console.log("Not found");
+    }
+});
+
+app.put('/deactivate-session', async (req, res) => {
+    await callQuery(`
+        update sessions
+        set active = FALSE
+        where email='${req.body.email} and session_time='${req.body.session_time} and active=TRUE';
+    `);
+
+    if (result.stack) {
+        await res.status(404);
+        return console.error('Error finding sessions');
+    } else {
+        await res.status(200);
         return console.log("Not found");
     }
 });
