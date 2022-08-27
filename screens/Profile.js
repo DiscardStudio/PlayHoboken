@@ -15,6 +15,7 @@ labels.set('F', 'Foosball');
 
 const Profile=(props) => {
     const [initialMount, setMounted] = useState(false);
+    const [shouldQuery, setShouldQuery] = useState(false);
     const [sessions, setSession] = useState([{
         key: 0,
         first_name: "You",
@@ -50,6 +51,24 @@ const Profile=(props) => {
         .catch(err => console.error(err)).done();
     },[initialMount]);
 
+    const removeSession = async (game, time) => {
+        await fetch('https://play-hoboken.herokuapp.com/deactivate-session', {
+            method: 'PUT',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                email: props.login.email,
+                game: game,
+                session_time: time
+            })
+        })
+        .then(res => res.status)
+        .catch(err => console.error(err)).done();
+        setShouldQuery(true); //To take advantage of React rendering upon state updates
+    }
+
     return (
         <View style={styles.container}>
             <Text style={styles.header1}>Hello {props.login.first_name}</Text>
@@ -72,6 +91,7 @@ const Profile=(props) => {
                     (labels.get(x.game))+
                     " at "+x.session_time
                     }</Text>
+                    { x.active ? <Button title="End game" onPress={e => removeSession(x.game, x.session_time)}/> : <View/>}
                 </View>
             )}
         </View>
@@ -120,7 +140,7 @@ const styles = StyleSheet.create({
         borderColor: 'black',
         borderRadius: 3,
         width: 350,
-        height: 50,
+        height: 75,
         margin: 15,
     },
     break: {
