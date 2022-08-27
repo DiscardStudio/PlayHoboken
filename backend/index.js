@@ -123,27 +123,46 @@ app.put('/create-session', async (req, res) => {
     if(date.getMinutes() < 10)
         time += 0;
     time+=date.getMinutes();
-    const result = await callQuery(`
-    insert into sessions(
+    const checkSession = await callQuery(`
+    select
         email,
         first_name,
         last_name,
         session_date,
         session_time,
         game,
-        active)
-    values (
-        '${req.body.email}',
-        '${req.body.first_name}',
-        '${req.body.last_name}',
-        '${today}',
-        '${time}',
-        '${req.body.game}',
-        TRUE);`);
-    if (result && result.rows) {
+        active
+    from sessions
+    where
+        email = '${req.body.email}' and
+        first_name = '${req.body.first_name}' and
+        last_name = '${req.body.last_name}' and
+        session_date = '${today}' and
+        session_time = '${time}' and
+        game = '${req.body.game}' and
+        active = TRUE);`);
+    if(result.rows.length > 0) {
         await res.status(403);
         return console.error('Session already exists');
     } else {
+        const result = await callQuery(`
+        insert into sessions(
+            email,
+            first_name,
+            last_name,
+            session_date,
+            session_time,
+            game,
+            active)
+        values (
+            '${req.body.email}',
+            '${req.body.first_name}',
+            '${req.body.last_name}',
+            '${today}',
+            '${time}',
+            '${req.body.game}',
+            TRUE);`);
+        
         const checkInterest = await callQuery(`
             select games
             from interests

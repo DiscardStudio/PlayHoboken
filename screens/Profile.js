@@ -12,6 +12,7 @@ labels.set('G', 'Golf');
 labels.set('E', 'E-Sports');
 labels.set('D', 'Darts');
 labels.set('F', 'Foosball');
+labels.set('any games', 'any games');
 
 const Profile=(props) => {
     const [initialMount, setMounted] = useState(false);
