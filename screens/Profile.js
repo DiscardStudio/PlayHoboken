@@ -68,8 +68,12 @@ const Profile=(props) => {
                 </View>
             :
             sessions.map(x=>
-                <View key={x.session_time} style={styles.find}>
-                    <Text>{x.first_name+" "+x.last_name+" played"+(labels.reduce(y => y.value === x.game ? ` ${y.label} ` : " "))+"at "+x.session_time}</Text>
+                <View key={x.session_time+x.game} style={styles.find}>
+                    <Text>{
+                    x.first_name+" "+x.last_name+" played"+
+                    (labels.reduce(y => y.value === x.game ? ` ${y.label} ` : " "))+//Does not trigger correctly
+                    "at "+x.session_time
+                    }</Text>
                 </View>
             )}
         </View>

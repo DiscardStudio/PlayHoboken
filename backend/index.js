@@ -230,6 +230,7 @@ app.post('/my-sessions', async (req, res) => {
         await res.status(403);
         return console.error('Error finding sessions');
     } else if (result.rows.length > 0) {
+        await result.rows.map(x=>console.table(x));
         await res.json({rows: result.rows});
         return console.log('Sent Sessions');
     } else {

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { StyleSheet, Text, ScrollView, View, Button } from "react-native";
 import DropdownComponent from "../components/DropdownComponent";
 
@@ -17,8 +17,8 @@ const labels = [
   ];
 
 const Find = (props) => {
-    const createSession = useRef("");
     const [shouldQuery, setShouldQuery] = useState(true);
+    const [createSession, setValue] = useState('');
     const [sessions, setSession] = useState([
         <View key={0} style={styles.find}>
             <Text>Loading...</Text>
@@ -42,18 +42,19 @@ const Find = (props) => {
                         <Text>Nobodys here. Be the first player of the day!</Text>
                     </View>
                 ]);
-            else
+            else {
                 setSession(data.rows.map(x=>{
                     return (
-                    <View key={x.session_time} style={styles.find}>
+                    <View key={x.session_time+x.game} style={styles.find}>
                         <Text>{
                             x.first_name+" "+x.last_name+
                             " started playing"+
-                            (labels.reduce(y => y.value === x.game ? ` ${y.label} ` : " "))+
+                            (labels.reduce(y => y.value === x.game ? ` ${y.label} ` : " "))+//Does not trigger correctly
                             "at "+x.session_time
                         }</Text>
                     </View>
                 );}));
+            }
         })
         .catch(err => console.error(err)).done();            
     },[shouldQuery]);
@@ -69,7 +70,7 @@ const Find = (props) => {
                 email: props.login.email,
                 first_name: props.login.first_name,
                 last_name: props.login.last_name,
-                game: createSession.current
+                game: createSession
             })
         })
         .then(res => res.status === 200? setSession([
@@ -91,7 +92,7 @@ const Find = (props) => {
             <Text style={styles.header2}>Nobody Playing Your Game?</Text>
             <Text style={styles.header3}>Start Your Own Session!</Text>
             <Text />
-            <DropdownComponent ref={createSession}/>
+            <DropdownComponent value={createSession} setValue={setValue}/>
             <Button title="Make Session" onPress={e => {
                 sessionCreation();
             }} />

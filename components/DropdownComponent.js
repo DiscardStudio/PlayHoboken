@@ -1,4 +1,4 @@
-import React, { forwardRef, useState } from 'react';
+import React, { useState } from 'react';
   import { StyleSheet, Text, View } from 'react-native';
   import { Dropdown } from 'react-native-element-dropdown';
   import AntDesign from 'react-native-vector-icons/AntDesign';
@@ -17,12 +17,11 @@ import React, { forwardRef, useState } from 'react';
     
   ];
 
-  const DropdownComponent = (props, ref) => {
-    const [value, setValue] = useState(null);
+  const DropdownComponent = (props) => {
     const [isFocus, setIsFocus] = useState(false);
 
     const renderLabel = () => {
-      if (value || isFocus) {
+      if (props.value || isFocus) {
         return (
           <Text style={[styles.label, isFocus && { color: 'blue' }]}>
             Games
@@ -48,12 +47,11 @@ import React, { forwardRef, useState } from 'react';
           valueField="value"
           placeholder={!isFocus ? 'Select Game' : '...'}
           searchPlaceholder="Search..."
-          value={value}
+          value={props.value}
           onFocus={() => setIsFocus(true)}
           onBlur={() => setIsFocus(false)}
           onChange={item => {
-            setValue(item.value);
-            ref.current=item.value;
+            props.setValue(item.value);
             setIsFocus(false);
           }}
           renderLeftIcon={() => (
@@ -69,7 +67,7 @@ import React, { forwardRef, useState } from 'react';
     );
   };
 
-  export default forwardRef(DropdownComponent);
+  export default DropdownComponent;
 
   const styles = StyleSheet.create({
     container: {
