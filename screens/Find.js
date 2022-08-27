@@ -46,7 +46,12 @@ const Find = (props) => {
                 setSession(data.rows.map(x=>{
                     return (
                     <View key={x.session_time} style={styles.find}>
-                        <Text>{x.first_name+" "+x.last_name+" started playing"+(labels.reduce(y => y.value === x.game ? ` ${y.label} ` : " "))+"at "+x.session_time}</Text>
+                        <Text>{
+                            x.first_name+" "+x.last_name+
+                            " started playing"+
+                            (labels.reduce(y => y.value === x.game ? ` ${y.label} ` : " "))+
+                            "at "+x.session_time
+                        }</Text>
                     </View>
                 );}));
         })

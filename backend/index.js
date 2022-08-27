@@ -111,7 +111,7 @@ var transporter = Mailer.createTransport({
     },
 });
 
-/*  notification template via email
+/*  notification template via email for /create-session
         pool.query(`
             select users.email, users.first_name
             from users, interests
@@ -202,7 +202,7 @@ app.get('/find-session', async (req, res) => {
     const date = new Date();
     var today = date.getMonth()+"/"+date.getDay()+"/"+date.getFullYear();
     const result = await callQuery(`
-                select email, first_name, last_name, session_time, game
+                select first_name, last_name, session_time, game
                 from sessions
                 where sessions.session_date='${today}' and sessions.active=TRUE
                 order by session_time desc
@@ -220,11 +220,12 @@ app.get('/find-session', async (req, res) => {
 });
 
 app.post('/my-sessions', async (req, res) => {
-    const result = await callQuery(`select first_name, last_name, session_time, game
+    const result = await callQuery(`
+                select first_name, last_name, session_time, game
                 from sessions
                 where sessions.email = '${req.body.email}'
                 order by session_time desc
-                `);
+                `)
     if (result.stack) {
         await res.status(403);
         return console.error('Error finding sessions');
