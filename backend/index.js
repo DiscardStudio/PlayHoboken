@@ -250,7 +250,7 @@ app.put('/deactivate-session', async (req, res) => {
         return console.error('Error finding sessions');
     } else {
         await res.status(200);
-        return console.log("Not found");
+        return console.log("Session Deactivated");
     }
 });
 

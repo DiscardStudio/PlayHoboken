@@ -15,7 +15,6 @@ labels.set('F', 'Foosball');
 
 const Profile=(props) => {
     const [initialMount, setMounted] = useState(false);
-    const [shouldQuery, setShouldQuery] = useState(false);
     const [sessions, setSession] = useState([{
         key: 0,
         first_name: "You",
@@ -66,7 +65,7 @@ const Profile=(props) => {
         })
         .then(res => res.status)
         .catch(err => console.error(err)).done();
-        setShouldQuery(true); //To take advantage of React rendering upon state updates
+        await setMounted(!initialMount); //To take advantage of React rendering upon state updates
     }
 
     return (
