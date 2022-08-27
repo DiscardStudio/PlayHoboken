@@ -242,7 +242,7 @@ app.put('/deactivate-session', async (req, res) => {
     const result = await callQuery(`
         update sessions
         set active = FALSE
-        where email='${req.body.email} and session_time='${req.body.session_time}' and active=TRUE and game=${req.body.game};
+        where email='${req.body.email}' and session_time='${req.body.session_time}' and active=TRUE and game='${req.body.game}';
     `);
 
     if (result.stack) {
