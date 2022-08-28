@@ -16,7 +16,7 @@ labels.set('any games', 'any games');
 
 const Profile=(props) => {
     const [initialMount, setMounted] = useState(false);
-    const [games, setGames] = useState(["BG"]);
+    const [games, setGames] = useState(["None"]);
     const [sessions, setSession] = useState([{
         key: 0,
         first_name: "You",
@@ -65,9 +65,10 @@ const Profile=(props) => {
             .then(data => data.json())
             .then(data => data.interests === undefined? ["None"]: setGames(data.interests), err=> console.error(err))
             .catch(err => console.error(err)).done();
+            console.log(games);
         }
         dataFetch();
-    },[initialMount, games]);
+    },[initialMount]);
 
     const removeSession = async (game, time) => {
         await fetch('https://play-hoboken.herokuapp.com/deactivate-session', {
@@ -87,22 +88,38 @@ const Profile=(props) => {
         await setMounted(!initialMount); //To take advantage of React rendering upon state updates
     }
 
+    const removeInterest = async (game) => {
+        await fetch('https://play-hoboken.herokuapp.com/set-interests', {
+            method: 'PUT',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                email: props.login.email,
+                game: games.filter(x => x !== game)
+            })
+        })
+        .then(res => res.status)
+        .catch(err => console.error(err)).done();
+        await setMounted(!initialMount); //To take advantage of React rendering upon state updates
+    }
+
     return (
         <View style={styles.container}>
             <Text style={styles.header1}>Hello {props.login.first_name}</Text>
             <Button title="Log out" onPress={e => props.render()}/>
             
             <Text style={styles.header2}>Your Interests:</Text>
-            {games.map(x => {
+            <View style={styles.break}/>
+            {games.map(x => (
                 <View key={x} style={styles.find}>
-                    <Text>{labels.get(x)}</Text>
+                    <Text style={styles.header4}>{labels.get(x)}</Text>
+                    <Button title="Remove Interest" onPress={e => removeInterest(x)} />
                 <View/>
             </View>
-            })}
+            ))}
             <Text style={styles.header2}>You've Played:</Text>
-            
-            <Text/>
-
             <View style={styles.break}/>
 
             {sessions === undefined?
